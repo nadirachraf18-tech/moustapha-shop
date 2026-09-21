@@ -1,0 +1,198 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type Timestamp = int;
+type StoreSettings = 
+ record {
+   address: text;
+   openingHours: text;
+   phone: text;
+   shopName: text;
+   tagline: text;
+   whatsappNumber: text;
+ };
+type Result__1 = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result_3 = 
+ variant {
+   err: CatalogError;
+   ok;
+ };
+type Result_2 = 
+ variant {
+   err: CatalogError;
+   ok: Category;
+ };
+type Result_1 = 
+ variant {
+   err: CatalogError;
+   ok: Product;
+ };
+type Result = 
+ variant {
+   err: CatalogError;
+   ok: StoreSettings;
+ };
+type ProductUpdate = 
+ record {
+   available: opt bool;
+   categoryId: opt CategoryId;
+   description: opt text;
+   featured: opt bool;
+   images: opt vec ProductImage;
+   name: opt text;
+   price: opt nat;
+ };
+type ProductSort = 
+ variant {
+   newest;
+   priceHighToLow;
+   priceLowToHigh;
+ };
+type ProductInput = 
+ record {
+   available: bool;
+   categoryId: CategoryId;
+   description: text;
+   featured: bool;
+   images: vec ProductImage;
+   name: text;
+   price: nat;
+ };
+type ProductImage = 
+ record {
+   "blob": ExternalBlob;
+   filename: text;
+   mimeType: text;
+ };
+type ProductId = nat;
+type ProductFilter = 
+ record {
+   categoryId: opt CategoryId;
+   search: opt text;
+   sort: opt ProductSort;
+ };
+type Product = 
+ record {
+   available: bool;
+   categoryId: CategoryId;
+   createdAt: Timestamp;
+   description: text;
+   featured: bool;
+   id: ProductId;
+   images: vec ProductImage;
+   name: text;
+   price: nat;
+   updatedAt: Timestamp;
+ };
+type ExternalBlob = blob;
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+type CategoryId = nat;
+type Category = 
+ record {
+   createdAt: Timestamp;
+   id: CategoryId;
+   name: text;
+ };
+type CatalogError = 
+ variant {
+   categoryInUse;
+   duplicateName;
+   invalidInput: text;
+   notAuthorized;
+   notFound;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result_4);
+  _internet_identity_sign_in_start: () -> (blob);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  createCategory: (name: text) -> (Result_2);
+  createProduct: (input: ProductInput) -> (Result_1);
+  deleteCategory: (id: CategoryId) -> (Result_3);
+  deleteProduct: (id: ProductId) -> (Result_3);
+  execute: (qJson: text) -> (Result__1) query;
+  /// Static Markdown description of this backend's public API.
+  getApiDoc: () -> (text) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getProduct: (id: ProductId) -> (opt Product) query;
+  getStoreSettings: () -> (StoreSettings) query;
+  isCallerAdmin: () -> (bool) query;
+  listCategories: () -> (vec Category) query;
+  listFeaturedProducts: () -> (vec Product) query;
+  listProducts: (filter: ProductFilter) -> (vec Product) query;
+  listRelatedProducts: (id: ProductId) -> (vec Product) query;
+  renameCategory: (id: CategoryId, name: text) -> (Result_2);
+  schema: () -> (text) query;
+  setProductAvailability: (id: ProductId, available: bool) -> (Result_1);
+  updateProduct: (id: ProductId, update: ProductUpdate) -> (Result_1);
+  updateStoreSettings: (settings: StoreSettings) -> (Result);
+}

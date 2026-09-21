@@ -1,0 +1,23 @@
+{
+  "overview": "An Arabic (Moroccan) RTL online storefront for Moustapha Shop with a full admin dashboard for managing products, categories, and store details.",
+  "features": [
+    "Browse products by category with search and sorting",
+    "Product pages with photo galleries and availability",
+    "Cart with WhatsApp order checkout",
+    "Admin dashboard with an at-a-glance overview of the shop",
+    "Add, edit, and remove products and categories",
+    "Mark products as featured or unavailable in one click",
+    "Upload product photos and edit store details",
+    "Preview the storefront from the dashboard"
+  ],
+  "category": "e-commerce",
+  "tags": [
+    "storefront",
+    "e-commerce",
+    "arabic",
+    "rtl",
+    "admin",
+    "catalog"
+  ],
+  "last_updated": "2026-09-21T16:43:07.621Z"
+}

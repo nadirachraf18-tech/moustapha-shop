@@ -1,0 +1,335 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Bundled fonts: Fraunces (elegant serif display) + General Sans (body)
+      + JetBrains Mono (numerals) ──
+   NOTE: the bundled font set contains no Arabic-capable family. Arabic glyphs
+   therefore render via the system Arabic fallback stack (see --font-arabic). */
+@font-face {
+  font-family: "Fraunces";
+  src: url("/assets/fonts/Fraunces.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/assets/fonts/JetBrainsMono.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --font-display: "Fraunces", "Noto Naskh Arabic", "Segoe UI",
+      "Noto Sans Arabic", "Tahoma", serif;
+    --font-body: "General Sans", "Noto Sans Arabic", "Segoe UI", "Tahoma",
+      sans-serif;
+    --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+    --font-accent: "Space Grotesk", "General Sans", "Noto Sans Arabic",
+      "Segoe UI", "Tahoma", sans-serif;
+    --font-arabic: "Noto Sans Arabic", "Segoe UI", "Tahoma", "Geeza Pro",
+      sans-serif;
+
+    /* Shape language — jewel-cut cards, pill badges */
+    --radius: 0.875rem;
+    --radius-card: 1.25rem;
+    --radius-pill: 999px;
+
+    /* Surfaces — pure black canvas, near-black lifted cards */
+    --background: 0.145 0.006 320;
+    --foreground: 0.97 0.004 320;
+    --card: 0.205 0.008 320;
+    --card-foreground: 0.97 0.004 320;
+    --popover: 0.205 0.008 320;
+    --popover-foreground: 0.97 0.004 320;
+
+    /* Primary — magenta-pink, the brand's signature */
+    --primary: 0.62 0.24 358;
+    --primary-foreground: 0.99 0.004 340;
+
+    --secondary: 0.255 0.012 320;
+    --secondary-foreground: 0.93 0.006 320;
+    --muted: 0.255 0.012 320;
+    --muted-foreground: 0.68 0.012 320;
+
+    /* Accent — metallic gold, reserved for highlights + sparkle */
+    --accent: 0.84 0.16 92;
+    --accent-foreground: 0.18 0.02 92;
+
+    /* Price / promo — luminous gold, the loudest color in the store */
+    --price: 0.85 0.165 90;
+    --price-foreground: 0.16 0.02 90;
+
+    /* Availability */
+    --success: 0.72 0.16 152;
+    --success-foreground: 0.14 0.02 152;
+    --warning: 0.82 0.15 82;
+    --warning-foreground: 0.17 0.02 82;
+    --destructive: 0.62 0.21 22;
+    --destructive-foreground: 0.98 0.006 22;
+
+    --border: 0.3 0.014 320;
+    --input: 0.3 0.014 320;
+    --ring: 0.62 0.24 358;
+
+    --chart-1: 0.62 0.24 358;
+    --chart-2: 0.85 0.165 90;
+    --chart-3: 0.72 0.16 152;
+    --chart-4: 0.82 0.15 82;
+    --chart-5: 0.68 0.012 320;
+
+    --sidebar: 0.185 0.008 320;
+    --sidebar-foreground: 0.97 0.004 320;
+    --sidebar-primary: 0.62 0.24 358;
+    --sidebar-primary-foreground: 0.99 0.004 340;
+    --sidebar-accent: 0.255 0.012 320;
+    --sidebar-accent-foreground: 0.93 0.006 320;
+    --sidebar-border: 0.3 0.014 320;
+    --sidebar-ring: 0.62 0.24 358;
+
+    /* Gradients — luxury pink → gold, pink → white */
+    --gradient-primary: linear-gradient(
+      135deg,
+      oklch(0.62 0.24 358) 0%,
+      oklch(0.5 0.2 350) 100%
+    );
+    --gradient-price: linear-gradient(
+      120deg,
+      oklch(0.88 0.16 95) 0%,
+      oklch(0.74 0.15 70) 100%
+    );
+    --gradient-subtle: linear-gradient(
+      180deg,
+      oklch(0.145 0.006 320) 0%,
+      oklch(0.205 0.008 320) 100%
+    );
+
+    /* Brand wordmark gradient — pink → white, echoing the logo lockup */
+    --gradient-brand: linear-gradient(
+      180deg,
+      oklch(0.72 0.22 355) 0%,
+      oklch(0.97 0.02 340) 100%
+    );
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Shadow hierarchy — dark-mode luminous glow, never warm light tint */
+    --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.6), 0 1px 3px 0
+      rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 10px 30px -12px rgba(0, 0, 0, 0.8), 0 0 24px -8px
+      rgba(233, 30, 99, 0.22);
+    --shadow-card-hover: 0 18px 44px -20px rgba(0, 0, 0, 0.85), 0 0 36px -8px
+      rgba(233, 30, 99, 0.4);
+    --shadow-glow-pink: 0 0 28px -6px rgba(233, 30, 99, 0.55);
+    --shadow-glow-gold: 0 0 26px -6px rgba(255, 215, 0, 0.45);
+  }
+
+  /* Dark-first theme: .dark mirrors :root so an explicit dark class is a no-op */
+  .dark {
+    --background: 0.145 0.006 320;
+    --foreground: 0.97 0.004 320;
+    --card: 0.205 0.008 320;
+    --card-foreground: 0.97 0.004 320;
+    --popover: 0.205 0.008 320;
+    --popover-foreground: 0.97 0.004 320;
+
+    --primary: 0.62 0.24 358;
+    --primary-foreground: 0.99 0.004 340;
+
+    --secondary: 0.255 0.012 320;
+    --secondary-foreground: 0.93 0.006 320;
+    --muted: 0.255 0.012 320;
+    --muted-foreground: 0.68 0.012 320;
+
+    --accent: 0.84 0.16 92;
+    --accent-foreground: 0.18 0.02 92;
+
+    --price: 0.85 0.165 90;
+    --price-foreground: 0.16 0.02 90;
+
+    --success: 0.72 0.16 152;
+    --success-foreground: 0.14 0.02 152;
+    --warning: 0.82 0.15 82;
+    --warning-foreground: 0.17 0.02 82;
+    --destructive: 0.62 0.21 22;
+    --destructive-foreground: 0.98 0.006 22;
+
+    --border: 0.3 0.014 320;
+    --input: 0.3 0.014 320;
+    --ring: 0.62 0.24 358;
+
+    --chart-1: 0.62 0.24 358;
+    --chart-2: 0.85 0.165 90;
+    --chart-3: 0.72 0.16 152;
+    --chart-4: 0.82 0.15 82;
+    --chart-5: 0.68 0.012 320;
+
+    --sidebar: 0.185 0.008 320;
+    --sidebar-foreground: 0.97 0.004 320;
+    --sidebar-primary: 0.62 0.24 358;
+    --sidebar-primary-foreground: 0.99 0.004 340;
+    --sidebar-accent: 0.255 0.012 320;
+    --sidebar-accent-foreground: 0.93 0.006 320;
+    --sidebar-border: 0.3 0.014 320;
+    --sidebar-ring: 0.62 0.24 358;
+
+    --gradient-primary: linear-gradient(
+      135deg,
+      oklch(0.62 0.24 358) 0%,
+      oklch(0.5 0.2 350) 100%
+    );
+    --gradient-price: linear-gradient(
+      120deg,
+      oklch(0.88 0.16 95) 0%,
+      oklch(0.74 0.15 70) 100%
+    );
+    --gradient-subtle: linear-gradient(
+      180deg,
+      oklch(0.145 0.006 320) 0%,
+      oklch(0.205 0.008 320) 100%
+    );
+    --gradient-brand: linear-gradient(
+      180deg,
+      oklch(0.72 0.22 355) 0%,
+      oklch(0.97 0.02 340) 100%
+    );
+  }
+
+  * {
+    @apply border-border;
+  }
+  html {
+    direction: rtl;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    direction: rtl;
+    text-align: right;
+    font-feature-settings: "kern" 1;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+  /* Latin numerals inside RTL Arabic text stay left-to-right and tabular */
+  .num,
+  [dir="ltr"] {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  .text-price {
+    color: oklch(var(--price));
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+  .bg-gradient-primary {
+    background-image: var(--gradient-primary);
+  }
+  .bg-gradient-price {
+    background-image: var(--gradient-price);
+  }
+  .bg-gradient-subtle {
+    background-image: var(--gradient-subtle);
+  }
+  .bg-gradient-brand {
+    background-image: var(--gradient-brand);
+  }
+  /* Brand wordmark — pink → white vertical gradient text, as in the logo */
+  .brand-heading {
+    background-image: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  /* Gold sparkle / underline accent — the logo's divider flourish */
+  .accent-sparkle {
+    position: relative;
+    display: inline-block;
+  }
+  .accent-sparkle::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.35em;
+    height: 1px;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      oklch(var(--accent)) 50%,
+      transparent 100%
+    );
+    box-shadow: var(--shadow-glow-gold);
+  }
+  .text-glow-pink {
+    text-shadow: 0 0 24px rgba(233, 30, 99, 0.45);
+  }
+  .text-glow-gold {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  }
+  .shadow-glow-pink {
+    box-shadow: var(--shadow-glow-pink);
+  }
+  .shadow-glow-gold {
+    box-shadow: var(--shadow-glow-gold);
+  }
+  .shadow-subtle {
+    box-shadow: var(--shadow-subtle);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  .shadow-card-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+  .card-product {
+    @apply rounded-[var(--radius-card)] border border-border bg-card overflow-hidden;
+    transition: var(--transition-smooth);
+  }
+  .card-product:hover {
+    @apply -translate-y-1 border-accent/40;
+    box-shadow: var(--shadow-card-hover);
+  }
+  .badge-pill {
+    @apply inline-flex items-center gap-1 rounded-[var(--radius-pill)] px-3 py-1 text-xs font-semibold;
+  }
+}
