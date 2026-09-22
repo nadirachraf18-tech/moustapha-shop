@@ -66,7 +66,7 @@ const routeTree = rootRoute.addChildren([
   adminRoute,
 ]);
 
-const router = createRouter({ routeTree });
+const router = createRouter({\n  routeTree,\n  basepath: "/moustapha-shop",\n});
 
 declare module "@tanstack/react-router" {
   interface Register {
