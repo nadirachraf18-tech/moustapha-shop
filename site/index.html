@@ -104,7 +104,7 @@ async function saveProduct(id){
     for(const f of imageFiles) uploadedImages.push(await uploadMedia(f,'products'));
     let videoUrl=existing.video_url||null;
     if(videoFile) videoUrl=await uploadMedia(videoFile,'videos');
-    const payload={name,description:document.querySelector('#pd').value.trim(),price,old_price:document.querySelector('#po').value?Number(document.querySelector('#po').value):null,category_id:document.querySelector('#pc').value||null,stock,video_url:videoUrl,colors:document.querySelector('#pcol').value.split(',').map(x=>x.trim()).filter(Boolean),sizes:document.querySelector('#pz').value.split(',').map(x=>x.trim()).filter(Boolean),images:uploadedImages.length?uploadedImages:(existing.images||[]),is_active:document.querySelector('#pa').checked,is_new:document.querySelector('#pnw').checked,is_featured:document.querySelector('#pf').checked};
+    const payload={name,description:document.querySelector('#pd').value.trim(),price,old_price:document.querySelector('#po').value?Number(document.querySelector('#po').value):null,category_id:document.querySelector('#pc').value||null,stock,video_url:videoUrl,colors:document.querySelector('#pcol').value.split(/[,;]+/).map(x=>x.trim()).filter(Boolean),sizes:document.querySelector('#pz').value.split(/[,;]+/).map(x=>x.trim()).filter(Boolean),images:uploadedImages.length?uploadedImages:(existing.images||[]),is_active:document.querySelector('#pa').checked,is_new:document.querySelector('#pnw').checked,is_featured:document.querySelector('#pf').checked};
     const q=id?sb.from('products').update(payload).eq('id',id):sb.from('products').insert(payload);
     const {error}=await q;if(error)throw error;
     alert('Produit enregistré avec succès.');
