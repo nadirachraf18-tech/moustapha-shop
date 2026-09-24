@@ -37,7 +37,7 @@ function bindHeroVideos(list){
 const video=document.querySelector('#heroProductVideo');if(!video)return;
 let index=0;
 const dots=[...document.querySelectorAll('.heroDot')];
-const show=(i,play=true)=>{index=(i+list.length)%list.length;video.src=list[index].video_url;video.load();dots.forEach((d,n)=>d.classList.toggle('active',n===index));if(play)video.play().catch(()=>{})};
+const show=(i,play=true)=>{index=(i+list.length)%list.length;video.src=list[index];video.load();dots.forEach((d,n)=>d.classList.toggle('active',n===index));if(play)video.play().catch(()=>{})};
 video.addEventListener('ended',()=>show(index+1));
 dots.forEach(d=>d.addEventListener('click',()=>show(Number(d.dataset.videoIndex))));
 video.play().catch(()=>{});
@@ -51,7 +51,7 @@ document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()
 function home(){
 const catHtml=cats.slice(0,9).map((c,i)=>'<button class="cat" data-cat="'+esc(c.id)+'"><div class="catpic">'+['👗','👚','🧥','👖','👟','👜','🕶️','💄','🎁'][i]+'</div><b>'+esc(c.name)+'</b></button>').join('');
 const heroVideos=(()=>{try{return JSON.parse(setting('hero_videos','[]'))||[]}catch(e){return []}})();
-const heroVideoHtml=heroVideos.length?'<div class="heroMedia"><div class="heroVideoBadge">🎬 Nos produits</div><video id="heroProductVideo" autoplay muted playsinline preload="metadata" src="'+esc(heroVideos[0].video_url)+'"></video><div class="heroVideoDots">'+heroVideos.map((p,i)=>'<button type="button" class="heroDot '+(i===0?'active':'')+'" data-video-index="'+i+'" aria-label="Vidéo '+(i+1)+'"></button>').join('')+'</div></div>':'';
+const heroVideoHtml=heroVideos.length?'<div class="heroMedia"><div class="heroVideoBadge">🎬 Nos produits</div><video id="heroProductVideo" autoplay muted playsinline preload="metadata" src="'+esc(heroVideos[0])+'"></video><div class="heroVideoDots">'+heroVideos.map((u,i)=>'<button type="button" class="heroDot '+(i===0?'active':'')+'" data-video-index="'+i+'" aria-label="Vidéo '+(i+1)+'"></button>').join('')+'</div></div>':'';
 app.innerHTML='<section class="hero"><div class="wrap"><div class="heroText"><p class="script">'+esc(setting('hero_title','Votre Style'))+'</p><h1>'+esc(setting('hero_subtitle','Notre Passion'))+'</h1><p>'+esc(setting('hero_description','Des vêtements, chaussures et sacs tendance pour toutes les femmes.'))+'</p><a class="heroBtn" href="#shop">Découvrir maintenant →</a><div class="services"><div class="service"><i>🚚</i><span><b>Livraison rapide</b><br>Partout au Maroc</span></div><div class="service"><i>🛡</i><span><b>Paiement</b><br>à la livraison</span></div><div class="service"><i>🎧</i><span><b>Service client</b><br>7j/7</span></div></div></div>'+heroVideoHtml+'</div></section><section class="categories"><div class="wrap"><div class="catgrid">'+catHtml+'</div></div></section><section class="section wrap"><div class="sectionTitle"><div><h2>Nouveautés</h2><p>Découvrez nos dernières arrivées</p></div><a class="btn dark" href="#shop">Voir tout →</a></div><div id="homegrid" class="grid">'+cards(products.slice(0,8))+'</div></section>';
 if(heroVideos.length) bindHeroVideos(heroVideos);
 bindCategoryButtons();
