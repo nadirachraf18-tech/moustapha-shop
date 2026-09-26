@@ -1,0 +1,37 @@
+name: Update contact section
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update-contact:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore: update contact section') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update contact section
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('site/index.html')
+          text = p.read_text(encoding='utf-8')
+          old = '''function contact(){app.innerHTML='<section class="section wrap"><h1>Contact</h1><p class="muted">Casablanca, Hay El Hassani, Rue 80</p><p><a class="btn" href="https://wa.me/212664624776" target="_blank">WhatsApp</a> <a class="btn dark" href="tel:+212664624776">+212 664-624776</a></p><p class="muted">Livraison Casablanca : 20 DH · Hors Casablanca : 35 DH</p></section>}'''
+          new = '''function contact(){const ig=setting('instagram_url','https://www.instagram.com/');const tk=setting('tiktok_url','https://www.tiktok.com/');const map='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent('Casablanca, Hay El Hassani, Rue 80');app.innerHTML='<section class="section wrap"><div style="max-width:1100px;margin:auto"><h1 style="font-size:42px;margin-bottom:10px">Contactez-nous</h1><p class="muted" style="font-size:18px">Nous sommes à votre disposition pour toute question ou commande.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px"><div class="stat"><h2>📍 Notre localisation</h2><p class="muted">Casablanca, Hay El Hassani, Rue 80</p><a class="btn" href="'+map+'" target="_blank" rel="noopener">Voir la localisation</a><p class="muted" style="margin-top:18px">🚚 Livraison Casablanca : 20 DH<br>🚚 Hors Casablanca : 35 DH</p></div><div class="stat"><h2>📱 Suivez-nous</h2><p class="muted">Retrouvez nos nouveautés et nos offres.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="'+ig+'" target="_blank" rel="noopener">Instagram</a><a class="btn dark" href="'+tk+'" target="_blank" rel="noopener">TikTok</a></div><p style="margin-top:18px"><a class="btn" href="https://wa.me/212664624776" target="_blank" rel="noopener">WhatsApp</a> <a class="btn dark" href="tel:+212664624776">+212 664-624776</a></p></div></div></div></section>'}'''
+          if old not in text:
+              raise SystemExit('Contact function not found; no changes made.')
+          p.write_text(text.replace(old,new,1), encoding='utf-8')
+          PY
+
+      - name: Commit update
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'chore: update contact section'
+          git push
