@@ -172,23 +172,36 @@ const itemResult=await sb.from('order_items').select('*').in('order_id',ids);
 if(itemResult.error){box.innerHTML='<p class="danger">'+esc(itemResult.error.message)+'</p>';return}
 const items=itemResult.data||[];
 const productIds=[...new Set(items.map(i=>i.product_id).filter(Boolean))];
-let photoByProduct={};
+let productById={};
 if(productIds.length){
- const productResult=await sb.from('products').select('id,images').in('id',productIds);
- (productResult.data||[]).forEach(p=>{photoByProduct[p.id]=Array.isArray(p.images)?(p.images[0]||''):''});
+ const productResult=await sb.from('products').select('id,images,colors').in('id',productIds);
+ (productResult.data||[]).forEach(p=>{productById[p.id]=p});
 }
+const colorPhoto=(item)=>{
+ const p=productById[item.product_id];
+ const images=Array.isArray(p?.images)?p.images:[];
+ const colors=Array.isArray(p?.colors)?p.colors:[];
+ if(item.color){
+  const idx=colors.findIndex(v=>String(v).trim().toLowerCase()===String(item.color).trim().toLowerCase());
+  if(idx>=0&&images[idx])return images[idx];
+ }
+ return images[0]||'';
+};
 let html='';
 for(const order of orders){
  let lines='';
  let photos='';
  for(const item of items){
   if(item.order_id!==order.id)continue;
+  const photo=colorPhoto(item);
   lines+='• '+(item.product_name||'Produit')+' × '+item.quantity;
   if(item.size)lines+=' | Taille: '+item.size;
   if(item.color)lines+=' | Couleur: '+item.color;
   lines+=' | '+money(item.unit_price);
-  const photo=photoByProduct[item.product_id]||'';
-  if(photo){lines+='\nPhoto: '+photo;photos+='<img src="'+esc(photo)+'" alt="'+esc(item.product_name||'Produit')+'" style="width:76px;height:88px;object-fit:cover;border-radius:8px;border:1px solid #eee;margin:8px 8px 0 0">';}
+  if(photo){
+   lines+='\nPhoto de la couleur: '+photo;
+   photos+='<div style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:top;margin:8px 8px 0 0"><img src="'+esc(photo)+'" alt="'+esc(item.product_name||'Produit')+' - '+esc(item.color||'')+'" style="width:76px;height:88px;object-fit:cover;border-radius:8px;border:1px solid #eee"><small style="font-size:11px;color:#665">'+esc(item.color||'Photo produit')+'</small></div>';
+  }
   lines+='\n';
  }
  const phone=String(order.phone||'').replace(/\D/g,'');
@@ -200,7 +213,7 @@ for(const order of orders){
  html+='<div onclick="orderDetails(&quot;'+order.id+'&quot;)" style="cursor:pointer"><b>📦 '+esc(order.order_number)+'</b> · '+esc(order.customer_name||'')+' · '+money(order.total);
  html+='<div>📞 '+esc(order.phone||'')+' · 📍 '+esc(order.city||'')+' · '+esc(order.address||'')+'</div>'+photos+'<small style="display:block">'+new Date(order.created_at).toLocaleString('fr-MA')+'</small></div>';
  html+='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px"><label style="font-weight:600">Statut:</label><select class="input" style="max-width:210px" onchange="updateOrderStatusQuick(&quot;'+order.id+'&quot;,this.value)"><option value="pending" '+((order.status||'pending')==='pending'?'selected':'')+'>En attente</option><option value="confirmed" '+(order.status==='confirmed'?'selected':'')+'>Confirmée</option><option value="shipped" '+(order.status==='shipped'?'selected':'')+'>Expédiée</option><option value="delivered" '+(order.status==='delivered'?'selected':'')+'>Livrée</option><option value="cancelled" '+(order.status==='cancelled'?'selected':'')+'>Annulée</option></select></div>';
- if(waPhone)html+='<a class="btn" style="display:inline-block;margin-top:12px;text-decoration:none" target="_blank" rel="noopener" href="'+link+'">💬 Envoyer le récapitulatif + liens photos</a>';
+ if(waPhone)html+='<a class="btn" style="display:inline-block;margin-top:12px;text-decoration:none" target="_blank" rel="noopener" href="'+link+'">💬 Envoyer le récapitulatif + photo de la couleur</a>';
  else html+='<small class="danger">Numéro client manquant</small>';
  html+='</div>';
 }
@@ -223,16 +236,17 @@ const {data:items,error:itemsError}=await sb.from('order_items').select('*').eq(
 if(itemsError)return alert(itemsError.message);
 const productIds=[...new Set((items||[]).map(i=>i.product_id).filter(Boolean))];
 let photoByProduct={};
-if(productIds.length){const pr=await sb.from('products').select('id,images').in('id',productIds);(pr.data||[]).forEach(p=>{photoByProduct[p.id]=Array.isArray(p.images)?(p.images[0]||''):''})}
+if(productIds.length){const pr=await sb.from('products').select('id,images,colors').in('id',productIds);(pr.data||[]).forEach(p=>{photoByProduct[p.id]=p})}
 const rawPhone=String(o.phone||'').replace(/\D/g,'');
 const waPhone=rawPhone.startsWith('0')?'212'+rawPhone.slice(1):rawPhone.startsWith('212')?rawPhone:rawPhone;
 const rawNote=String(o.notes||'').trim();
 const customerNote=/utm_|fbclid=|Commande depuis Landing Page/i.test(rawNote)?'':rawNote;
-const itemLines=(items||[]).map(i=>'• '+i.product_name+' | '+i.quantity+' × '+money(i.unit_price)+(i.size?' | Taille '+i.size:'')+(i.color?' | Couleur '+i.color:'')+(photoByProduct[i.product_id]?' | Photo: '+photoByProduct[i.product_id]:'')).join('\n');
+const itemPhoto=i=>{const p=photoByProduct[i.product_id];const imgs=Array.isArray(p?.images)?p.images:[];const cols=Array.isArray(p?.colors)?p.colors:[];const ix=i.color?cols.findIndex(v=>String(v).trim().toLowerCase()===String(i.color).trim().toLowerCase()):-1;return (ix>=0&&imgs[ix])||imgs[0]||''};
+const itemLines=(items||[]).map(i=>'• '+i.product_name+' | '+i.quantity+' × '+money(i.unit_price)+(i.size?' | Taille '+i.size:'')+(i.color?' | Couleur '+i.color:'')+(itemPhoto(i)?' | Photo: '+itemPhoto(i):'')).join('\n');
 const waMessage='Bonjour '+(o.customer_name||'')+' 👋\\n\\nNous vous contactons de Moustapha Shop concernant votre commande '+o.order_number+'.\\n\\n'+itemLines+'\\n\\nVille: '+(o.city||'')+'\\nAdresse: '+(o.address||'')+(customerNote?'\\nVotre note: '+customerNote:'')+'\\n\\nSous-total: '+money(o.subtotal)+'\\nLivraison: '+money(o.shipping)+'\\nTotal à payer: '+money(o.total)+'\\n\\nMerci de nous confirmer si les informations sont correctes. 🌸';
 const waButton=waPhone?'<a class="btn" style="display:inline-block;text-decoration:none;margin:12px 0" target="_blank" rel="noopener" href="https://wa.me/'+encodeURIComponent(waPhone)+'?text='+encodeURIComponent(waMessage)+'">💬 Envoyer un WhatsApp au client</a>':'<p class="danger">Numéro client manquant ou invalide.</p>';
 const field=(label,value)=>'<div style="padding:10px 12px;background:#fff;border:1px solid #eee;border-radius:10px;min-width:0"><small style="display:block;color:#766a70;margin-bottom:4px">'+label+'</small><b style="display:block;overflow-wrap:anywhere">'+esc(value||'Non renseigné')+'</b></div>';
-modal.innerHTML='<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h2>📦 Commande '+esc(o.order_number)+'</h2><button class="btn dark" onclick="closePanel()">×</button></div><p class="muted">Date: '+new Date(o.created_at).toLocaleString('fr-MA')+'</p><h3>👤 Informations saisies par le client</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px">'+field('Nom complet',o.customer_name)+field('Téléphone',o.phone)+field('Ville',o.city)+field('Adresse de livraison',o.address)+'</div>'+(customerNote?'<div style="margin-top:10px">'+field('Note du client',customerNote)+'</div>':'')+waButton+'<h3 style="margin-top:20px">🛍 Articles commandés</h3><div class="items">'+(items||[]).map(i=>'<div class="item" style="padding:12px;border-bottom:1px solid #eee;display:flex;gap:12px;align-items:center">'+(photoByProduct[i.product_id]?'<img src="'+esc(photoByProduct[i.product_id])+'" alt="'+esc(i.product_name)+'" style="width:86px;height:100px;object-fit:cover;border-radius:9px">':'')+'<div style="flex:1"><b>'+esc(i.product_name)+'</b><div class="muted" style="margin-top:5px">Quantité: '+i.quantity+' · Prix unitaire: '+money(i.unit_price)+(i.size?' · Taille: '+esc(i.size):'')+(i.color?' · Couleur: '+esc(i.color):'')+'</div></div><b>'+money(Number(i.unit_price||0)*Number(i.quantity||0))+'</b></div>').join('')||'<p class="muted">Aucun article enregistré.</p>'+'</div><h3 style="margin-top:20px">💰 Récapitulatif</h3><div style="padding:14px;background:#fff;border:1px solid #eee;border-radius:12px"><p>Sous-total: <b>'+money(o.subtotal)+'</b></p><p>Livraison: <b>'+money(o.shipping)+'</b></p><p style="font-size:18px">Total à payer: <b>'+money(o.total)+'</b></p></div><label style="display:block;margin-top:18px"><b>Statut de la commande</b><select class="input" id="orderStatus"><option value="pending">En attente</option><option value="confirmed">Confirmée</option><option value="shipped">Expédiée</option><option value="delivered">Livrée</option><option value="cancelled">Annulée</option></select></label><button class="btn" onclick="updateOrderStatus(&quot;'+o.id+'&quot;)">💾 Enregistrer le statut</button>';
+modal.innerHTML='<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h2>📦 Commande '+esc(o.order_number)+'</h2><button class="btn dark" onclick="closePanel()">×</button></div><p class="muted">Date: '+new Date(o.created_at).toLocaleString('fr-MA')+'</p><h3>👤 Informations saisies par le client</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px">'+field('Nom complet',o.customer_name)+field('Téléphone',o.phone)+field('Ville',o.city)+field('Adresse de livraison',o.address)+'</div>'+(customerNote?'<div style="margin-top:10px">'+field('Note du client',customerNote)+'</div>':'')+waButton+'<h3 style="margin-top:20px">🛍 Articles commandés</h3><div class="items">'+(items||[]).map(i=>'<div class="item" style="padding:12px;border-bottom:1px solid #eee;display:flex;gap:12px;align-items:center">'+(itemPhoto(i)?'<img src="'+esc(itemPhoto(i))+'" alt="'+esc(i.product_name)+'" style="width:86px;height:100px;object-fit:cover;border-radius:9px">':'')+'<div style="flex:1"><b>'+esc(i.product_name)+'</b><div class="muted" style="margin-top:5px">Quantité: '+i.quantity+' · Prix unitaire: '+money(i.unit_price)+(i.size?' · Taille: '+esc(i.size):'')+(i.color?' · Couleur: '+esc(i.color):'')+'</div></div><b>'+money(Number(i.unit_price||0)*Number(i.quantity||0))+'</b></div>').join('')||'<p class="muted">Aucun article enregistré.</p>'+'</div><h3 style="margin-top:20px">💰 Récapitulatif</h3><div style="padding:14px;background:#fff;border:1px solid #eee;border-radius:12px"><p>Sous-total: <b>'+money(o.subtotal)+'</b></p><p>Livraison: <b>'+money(o.shipping)+'</b></p><p style="font-size:18px">Total à payer: <b>'+money(o.total)+'</b></p></div><label style="display:block;margin-top:18px"><b>Statut de la commande</b><select class="input" id="orderStatus"><option value="pending">En attente</option><option value="confirmed">Confirmée</option><option value="shipped">Expédiée</option><option value="delivered">Livrée</option><option value="cancelled">Annulée</option></select></label><button class="btn" onclick="updateOrderStatus(&quot;'+o.id+'&quot;)">💾 Enregistrer le statut</button>';
 document.querySelector('#orderStatus').value=o.status||'pending';
 panel.classList.add('open')
 }
