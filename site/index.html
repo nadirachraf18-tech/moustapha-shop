@@ -198,10 +198,13 @@ for(const order of orders){
   if(item.size)lines+=' | Taille: '+item.size;
   if(item.color)lines+=' | Couleur: '+item.color;
   lines+=' | '+money(item.unit_price);
-  if(photo){
-   lines+='\nPhoto de la couleur: '+photo;
-   photos+='<div style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:top;margin:8px 8px 0 0"><img src="'+esc(photo)+'" alt="'+esc(item.product_name||'Produit')+' - '+esc(item.color||'')+'" style="width:76px;height:88px;object-fit:cover;border-radius:8px;border:1px solid #eee"><small style="font-size:11px;color:#665">'+esc(item.color||'Photo produit')+'</small></div>';
-  }
+  photos+='<div style="display:flex;align-items:center;gap:14px;margin:10px 0;padding:10px;border:1px solid #eee;border-radius:10px;background:#fff">';
+  if(photo)photos+='<img src="'+esc(photo)+'" alt="'+esc(item.product_name||'Produit')+' - '+esc(item.color||'')+'" style="width:92px;height:108px;flex:0 0 92px;object-fit:cover;border-radius:8px;border:1px solid #eee">';
+  photos+='<div style="min-width:0"><b style="display:block">'+esc(item.product_name||'Produit')+'</b><div style="margin-top:5px;color:#665;font-size:14px">Quantité: '+esc(String(item.quantity||1))+'</div>';
+  photos+='<div style="margin-top:4px;color:#665;font-size:14px">Taille: '+esc(item.size||'Non précisée')+'</div>';
+  photos+='<div style="margin-top:4px;color:#665;font-size:14px">Couleur: '+esc(item.color||'Non précisée')+'</div>';
+  photos+='<div style="margin-top:4px;font-weight:600">'+money(item.unit_price)+'</div></div></div>';
+  if(photo)lines+='\nPhoto de la couleur: '+photo;
   lines+='\n';
  }
  const phone=String(order.phone||'').replace(/\D/g,'');
