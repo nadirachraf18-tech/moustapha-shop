@@ -162,8 +162,38 @@ async function login(){const {error}=await sb.auth.signInWithPassword({email:em.
 async function logout(){await sb.auth.signOut();admin()}
 async function loadAdminStats(){const el=document.querySelector('#adminStats');if(!el)return;const [{count:pc},{count:cc},{count:oc}]=await Promise.all([sb.from('products').select('*',{count:'exact',head:true}),sb.from('categories').select('*',{count:'exact',head:true}),sb.from('orders').select('*',{count:'exact',head:true})]);el.innerHTML='<div class="stat"><b>'+Number(pc||0)+'</b><span>Produits</span></div><div class="stat"><b>'+Number(cc||0)+'</b><span>Catégories</span></div><div class="stat"><b>'+Number(oc||0)+'</b><span>Commandes</span></div>'}
 async function loadOrders(){
-const {data,error}=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(20);
-document.querySelector('#orders').innerHTML=error?'<p class="danger">'+esc(error.message)+'</p>':(data||[]).map(o=>'<button class="msg orderRow" style="display:block;width:100%;text-align:left;margin:10px 0;padding:16px;border:1px solid #eadde3;border-radius:14px;background:#fff;color:#29232a;cursor:pointer" onclick="orderDetails(&quot;'+o.id+'&quot;)"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>📦 '+esc(o.order_number)+'</b><b>'+money(o.total)+'</b></div><div style="margin-top:8px"><b>👤 '+esc(o.customer_name||'Nom non renseigné')+'</b> · 📞 '+esc(o.phone||'—')+'</div><div style="margin-top:5px">📍 '+esc(o.city||'Ville non renseignée')+' · '+esc(o.address||'Adresse non renseignée')+'</div><small style="display:block;margin-top:8px;color:#776b72">'+new Date(o.created_at).toLocaleString('fr-MA')+' · Statut: '+esc(o.status||'pending')+'</small></button>').join('')||'<p class="muted">Aucune commande.</p>'
+const result=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(20);
+const box=document.querySelector('#orders');
+if(result.error){box.innerHTML='<p class="danger">'+esc(result.error.message)+'</p>';return}
+const orders=result.data||[];
+if(!orders.length){box.innerHTML='<p class="muted">Aucune commande.</p>';return}
+const ids=[];
+for(const order of orders){ids.push(order.id)}
+const itemResult=await sb.from('order_items').select('*').in('order_id',ids);
+if(itemResult.error){box.innerHTML='<p class="danger">'+esc(itemResult.error.message)+'</p>';return}
+const items=itemResult.data||[];
+let html='';
+for(const order of orders){
+ let lines='';
+ for(const item of items){
+  if(item.order_id!==order.id)continue;
+  lines+='• '+(item.product_name||'Produit')+' × '+item.quantity;
+  if(item.size)lines+=' | Taille: '+item.size;
+  if(item.color)lines+=' | Couleur: '+item.color;
+  lines+=' | '+money(item.unit_price)+'\n';
+ }
+ const phone=String(order.phone||'').replace(/\D/g,'');
+ const waPhone=phone.startsWith('0')?'212'+phone.slice(1):phone;
+ let message='Bonjour '+(order.customer_name||'')+' 👋\n\nCommande '+order.order_number+' – Moustapha Shop\n\nArticles commandés:\n'+lines+'\nNom: '+(order.customer_name||'')+'\nTéléphone: '+(order.phone||'')+'\nVille: '+(order.city||'')+'\nAdresse: '+(order.address||'')+'\nSous-total: '+money(order.subtotal)+'\nLivraison: '+money(order.shipping)+'\nTotal à payer: '+money(order.total)+'\n\nMerci de confirmer votre commande. 🌸';
+ const link='https://wa.me/'+encodeURIComponent(waPhone)+'?text='+encodeURIComponent(message);
+ html+='<div class="msg orderRow" style="display:block;margin:10px 0;padding:16px;border:1px solid #eadde3;border-radius:14px;background:#fff;color:#29232a">';
+ html+='<div onclick="orderDetails(&quot;'+order.id+'&quot;)" style="cursor:pointer"><b>📦 '+esc(order.order_number)+'</b> · '+esc(order.customer_name||'')+' · '+money(order.total);
+ html+='<div>📞 '+esc(order.phone||'')+' · 📍 '+esc(order.city||'')+' · '+esc(order.address||'')+'</div><small>'+new Date(order.created_at).toLocaleString('fr-MA')+' · '+esc(order.status||'pending')+'</small></div>';
+ if(waPhone)html+='<a class="btn" style="display:inline-block;margin-top:12px;text-decoration:none" target="_blank" rel="noopener" href="'+link+'">💬 Envoyer le récapitulatif au client</a>';
+ else html+='<small class="danger">Numéro client manquant</small>';
+ html+='</div>';
+}
+box.innerHTML=html;
 }
 async function adminOrders(){const s=(await sb.auth.getSession()).data.session;if(!s){location.hash='#admin';return}const {data:isA}=await sb.from('admin_users').select('user_id').eq('user_id',s.user.id).maybeSingle();if(!isA){location.hash='#admin';return}app.innerHTML='<section class="section wrap admin" style="display:block"><div class="adminHead"><h1>📦 Commandes</h1><div><a class="btn dark" href="#admin">← Dashboard</a></div></div><div id="orders">Chargement…</div></section>';loadOrders()}
 async function orderDetails(id){
