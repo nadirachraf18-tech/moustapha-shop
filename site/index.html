@@ -177,7 +177,7 @@ if(productIds.length){
  const productResult=await sb.from('products').select('id,images,colors').in('id',productIds);
  (productResult.data||[]).forEach(p=>{productById[p.id]=p});
 }
-const colorPhoto=(item)=>{
+const colorPhoto=item=>{
  const p=productById[item.product_id];
  const images=Array.isArray(p?.images)?p.images:[];
  const colors=Array.isArray(p?.colors)?p.colors:[];
@@ -189,41 +189,40 @@ const colorPhoto=(item)=>{
 };
 let html='';
 for(const order of orders){
- let lines='';
- let photos='';
- for(const item of items){
-  if(item.order_id!==order.id)continue;
+ const orderItems=items.filter(i=>i.order_id===order.id);
+ let productHtml='';
+ let messageLines='';
+ for(const item of orderItems){
   const photo=colorPhoto(item);
-  lines+='• '+(item.product_name||'Produit')+' × '+item.quantity;
-  if(item.size)lines+=' | Taille: '+item.size;
-  if(item.color)lines+=' | Couleur: '+item.color;
-  lines+=' | '+money(item.unit_price);
-  photos+='<div style="display:flex;align-items:center;gap:14px;margin:10px 0;padding:10px;border:1px solid #eee;border-radius:10px;background:#fff">';
-  if(photo)photos+='<img src="'+esc(photo)+'" alt="'+esc(item.product_name||'Produit')+' - '+esc(item.color||'')+'" style="width:92px;height:108px;flex:0 0 92px;object-fit:cover;border-radius:8px;border:1px solid #eee">';
-  photos+='<div style="min-width:0"><b style="display:block">'+esc(item.product_name||'Produit')+'</b><div style="margin-top:5px;color:#665;font-size:14px">Quantité: '+esc(String(item.quantity||1))+'</div>';
-  photos+='<div style="margin-top:4px;color:#665;font-size:14px">Taille: '+esc(item.size||'Non précisée')+'</div>';
-  photos+='<div style="margin-top:4px;color:#665;font-size:14px">Couleur: '+esc(item.color||'Non précisée')+'</div>';
-  photos+='<div style="margin-top:4px;font-weight:600">'+money(item.unit_price)+'</div></div></div>';
-  if(photo)lines+='\nPhoto de la couleur: '+photo;
-  lines+='\n';
+  messageLines+='• '+(item.product_name||'Produit')+' × '+item.quantity+' | Taille: '+(item.size||'—')+' | Couleur: '+(item.color||'—')+' | '+money(item.unit_price);
+  if(photo)messageLines+='\nPhoto: '+photo;
+  messageLines+='\n';
+  productHtml+='<div style="display:flex;align-items:flex-start;gap:12px;padding:10px;border:1px solid #eee;border-radius:10px;margin:8px 0;background:#fff;min-width:0">';
+  if(photo)productHtml+='<img src="'+esc(photo)+'" alt="'+esc(item.product_name||'Produit')+'" style="width:105px;height:125px;flex:0 0 105px;object-fit:cover;border-radius:8px;border:1px solid #eee">';
+  else productHtml+='<div style="width:105px;height:125px;flex:0 0 105px;border-radius:8px;background:#f5f5f5;display:grid;place-items:center;color:#777;font-size:12px">Pas de photo</div>';
+  productHtml+='<div style="min-width:0;flex:1;color:#29232a"><b style="display:block;font-size:16px;line-height:1.3">'+esc(item.product_name||'Produit')+'</b>';
+  productHtml+='<div style="margin-top:8px;font-size:14px;line-height:1.7;color:#514850">Quantité: <b>'+esc(String(item.quantity||1))+'</b><br>Taille: <b>'+esc(item.size||'Non précisée')+'</b><br>Couleur: <b>'+esc(item.color||'Non précisée')+'</b><br>Prix: <b>'+money(item.unit_price)+'</b></div></div></div>';
  }
  const phone=String(order.phone||'').replace(/\D/g,'');
  const waPhone=phone.startsWith('0')?'212'+phone.slice(1):phone;
  const note=String(order.notes||'').replace(/utm_[^|]*|fbclid=[^|]*|Commande depuis Landing Page/gi,'').trim();
- const message='Bonjour '+(order.customer_name||'')+' 👋\n\nCommande '+order.order_number+' – Moustapha Shop\n\nArticles commandés:\n'+lines+'\nNom: '+(order.customer_name||'')+'\nTéléphone: '+(order.phone||'')+'\nVille: '+(order.city||'')+'\nAdresse: '+(order.address||'')+(note?'\nNote: '+note:'')+'\nSous-total: '+money(order.subtotal)+'\nLivraison: '+money(order.shipping)+'\nTotal à payer: '+money(order.total)+'\n\nMerci de confirmer votre commande. 🌸';
+ const message='Bonjour '+(order.customer_name||'')+' 👋\n\nCommande '+order.order_number+' – Moustapha Shop\n\nArticles commandés:\n'+messageLines+'\nInformations client:\nNom: '+(order.customer_name||'')+'\nTéléphone: '+(order.phone||'')+'\nVille: '+(order.city||'')+'\nAdresse: '+(order.address||'')+(note?'\nNote: '+note:'')+'\n\nSous-total: '+money(order.subtotal)+'\nLivraison: '+money(order.shipping)+'\nTotal à payer: '+money(order.total)+'\n\nMerci de confirmer votre commande. 🌸';
  const link='https://wa.me/'+encodeURIComponent(waPhone)+'?text='+encodeURIComponent(message);
- html+='<div class="msg orderRow" style="display:block;margin:10px 0;padding:16px;border:1px solid #eadde3;border-radius:14px;background:#fff;color:#29232a">';
- html+='<div onclick="orderDetails(&quot;'+order.id+'&quot;)" style="cursor:pointer"><b>📦 '+esc(order.order_number)+'</b> · '+esc(order.customer_name||'')+' · '+money(order.total);
- html+='<div>📞 '+esc(order.phone||'')+' · 📍 '+esc(order.city||'')+' · '+esc(order.address||'')+'</div>'+photos+'<small style="display:block">'+new Date(order.created_at).toLocaleString('fr-MA')+'</small></div>';
- html+='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px"><label style="font-weight:600">Statut:</label><select class="input" style="max-width:210px" onchange="updateOrderStatusQuick(&quot;'+order.id+'&quot;,this.value)"><option value="pending" '+((order.status||'pending')==='pending'?'selected':'')+'>En attente</option><option value="confirmed" '+(order.status==='confirmed'?'selected':'')+'>Confirmée</option><option value="shipped" '+(order.status==='shipped'?'selected':'')+'>Expédiée</option><option value="delivered" '+(order.status==='delivered'?'selected':'')+'>Livrée</option><option value="cancelled" '+(order.status==='cancelled'?'selected':'')+'>Annulée</option></select></div>';
- if(waPhone)html+='<a class="btn" style="display:inline-block;margin-top:12px;text-decoration:none" target="_blank" rel="noopener" href="'+link+'">💬 Envoyer le récapitulatif + photo de la couleur</a>';
- else html+='<small class="danger">Numéro client manquant</small>';
- html+='</div>';
+ html+='<div class="msg orderRow" style="display:block;margin:12px 0;padding:16px;border:1px solid #eadde3;border-radius:14px;background:#fff;color:#29232a;box-sizing:border-box;width:100%">';
+ html+='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px"><b style="font-size:18px">📦 N° '+esc(order.order_number)+'</b><b style="font-size:18px;color:#ed2674">'+money(order.total)+'</b></div>';
+ html+='<div style="display:grid;grid-template-columns:minmax(0,1fr);gap:8px">';
+ html+='<div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap"><b>Nom:</b> '+esc(order.customer_name||'—')+' <span>·</span> <b>Téléphone:</b> '+esc(order.phone||'—')+'</div>';
+ html+='<div><b>Ville:</b> '+esc(order.city||'—')+'</div><div><b>Adresse:</b> '+esc(order.address||'—')+'</div>';
+ if(note)html+='<div><b>Note:</b> '+esc(note)+'</div>';
+ html+='</div><div style="margin-top:12px"><b style="display:block;margin-bottom:6px">Articles commandés</b>'+productHtml+'</div>';
+ html+='<small style="display:block;color:#776b72;margin-top:8px">'+new Date(order.created_at).toLocaleString('fr-MA')+'</small>';
+ html+='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #eee"><label style="font-weight:700">Statut:</label><select class="input" style="max-width:210px;flex:1;min-width:145px" onchange="updateOrderStatusQuick(&quot;'+order.id+'&quot;,this.value)"><option value="pending" '+((order.status||'pending')==='pending'?'selected':'')+'>En attente</option><option value="confirmed" '+(order.status==='confirmed'?'selected':'')+'>Confirmée</option><option value="shipped" '+(order.status==='shipped'?'selected':'')+'>Expédiée</option><option value="delivered" '+(order.status==='delivered'?'selected':'')+'>Livrée</option><option value="cancelled" '+(order.status==='cancelled'?'selected':'')+'>Annulée</option></select>';
+ html+='<b style="font-size:18px;color:#ed2674">Total: '+money(order.total)+'</b>';
+ if(waPhone)html+='<a class="btn" style="display:inline-block;text-decoration:none;white-space:normal" target="_blank" rel="noopener" href="'+link+'">💬 WhatsApp</a>';
+ html+='</div></div>';
 }
 box.innerHTML=html;
-}
-
-async function updateOrderStatusQuick(id,status){
+}async function updateOrderStatusQuick(id,status){
 const allowed=['pending','confirmed','shipped','delivered','cancelled'];
 if(!allowed.includes(status))return alert('Statut invalide');
 const {error}=await sb.from('orders').update({status}).eq('id',id);
