@@ -373,12 +373,12 @@ const {data:items,error:itemsError}=await sb.from('order_items').select('*').eq(
 if(itemsError)return alert(itemsError.message);
 const productIds=[...new Set((items||[]).map(i=>i.product_id).filter(Boolean))];
 let photoByProduct={};
-if(productIds.length){const pr=await sb.from('products').select('id,images,colors').in('id',productIds);(pr.data||[]).forEach(p=>{photoByProduct[p.id]=p})}
+if(productIds.length){const pr=await sb.from('products').select('id,images,colors,color_images').in('id',productIds);(pr.data||[]).forEach(p=>{photoByProduct[p.id]=p})}
 const rawPhone=String(o.phone||'').replace(/\D/g,'');
 const waPhone=rawPhone.startsWith('0')?'212'+rawPhone.slice(1):rawPhone.startsWith('212')?rawPhone:rawPhone;
 const rawNote=String(o.notes||'').trim();
 const customerNote=/utm_|fbclid=|Commande depuis Landing Page/i.test(rawNote)?'':rawNote;
-const itemPhoto=i=>{const p=photoByProduct[i.product_id];const imgs=Array.isArray(p?.images)?p.images:[];const cols=Array.isArray(p?.colors)?p.colors:[];const ix=i.color?cols.findIndex(v=>String(v).trim().toLowerCase()===String(i.color).trim().toLowerCase()):-1;return (ix>=0&&imgs[ix])||imgs[0]||''};
+const itemPhoto=i=>{const p=photoByProduct[i.product_id];const imgs=Array.isArray(p?.images)?p.images:[];const cols=Array.isArray(p?.colors)?p.colors:[];const map=p?.color_images&&typeof p.color_images==='object'?p.color_images:{};if(i.color&&map[i.color])return map[i.color];const ix=i.color?cols.findIndex(v=>String(v).trim().toLowerCase()===String(i.color).trim().toLowerCase()):-1;return (ix>=0&&imgs[ix])||imgs[0]||''};
 const itemLines=(items||[]).map(i=>'• '+i.product_name+' | '+i.quantity+' × '+money(i.unit_price)+(i.size?' | Taille '+i.size:'')+(i.color?' | Couleur '+i.color:'')+(itemPhoto(i)?' | Photo: '+itemPhoto(i):'')).join('\n');
 const waMessage='Bonjour '+(o.customer_name||'')+' 👋\\n\\nNous vous contactons de Moustapha Shop concernant votre commande '+o.order_number+'.\\n\\n'+itemLines+'\\n\\nVille: '+(o.city||'')+'\\nAdresse: '+(o.address||'')+(customerNote?'\\nVotre note: '+customerNote:'')+'\\n\\nSous-total: '+money(o.subtotal)+'\\nLivraison: '+money(o.shipping)+'\\nTotal à payer: '+money(o.total)+'\\n\\nMerci de nous confirmer si les informations sont correctes. 🌸';
 const waButton=waPhone?'<a class="btn" style="display:inline-block;text-decoration:none;margin:12px 0" target="_blank" rel="noopener" href="https://wa.me/'+encodeURIComponent(waPhone)+'?text='+encodeURIComponent(waMessage)+'">💬 Envoyer un WhatsApp au client</a>':'<p class="danger">Numéro client manquant ou invalide.</p>';
