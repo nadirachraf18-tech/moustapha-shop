@@ -123,6 +123,47 @@ header{background:rgba(12,8,11,.97);box-shadow:0 8px 28px rgba(0,0,0,.12)}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+
+/* Moustapha Shop Admin Studio */
+.adminStudio{max-width:none!important;padding:0!important;background:#f7f6f9;min-height:calc(100vh - 210px);display:grid;grid-template-columns:250px minmax(0,1fr);gap:0;color:#211b25}
+.adminSide{background:linear-gradient(165deg,#17111d,#241326 70%,#17111d);color:#fff;padding:24px 14px;display:flex;flex-direction:column;gap:7px}
+.adminBrand{padding:4px 12px 24px;text-align:center;border-bottom:1px solid #ffffff18;margin-bottom:10px}
+.adminBrand img{width:155px;height:70px;object-fit:contain;filter:brightness(0) invert(1)}
+.adminBrand b{display:block;font-family:Georgia,serif;font-size:20px}.adminBrand small{color:#d9cbd5}
+.adminSide a{display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:11px;color:#f5edf3;font-size:14px;font-weight:700;transition:.2s}
+.adminSide a:hover,.adminSide a.active{background:linear-gradient(100deg,#f02b78,#a51662);box-shadow:0 7px 20px #e91e7040}
+.adminSide .sideBottom{margin-top:auto;border:1px solid #e83b8b;color:#fff;justify-content:center}
+.adminMain{min-width:0;padding:22px 24px 38px}
+.adminTop{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.adminSearch{background:#fff;border:1px solid #eee;border-radius:12px;padding:12px 16px;min-width:min(440px,55%);color:#817783}
+.adminUser{display:flex;align-items:center;gap:10px;font-weight:800}
+.adminAvatar{width:42px;height:42px;border-radius:50%;background:#fce3ed;color:#d91e70;display:grid;place-items:center;font-size:20px}
+.adminWelcome{margin-bottom:18px}.adminWelcome h1{font-size:29px;margin:0 0 5px}.adminWelcome p{margin:0;color:#817783}
+.adminMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:17px}
+.adminMetric{background:#fff;border:1px solid #eee8ef;border-radius:17px;padding:17px;display:flex;align-items:center;gap:13px;box-shadow:0 5px 18px #21102008;min-width:0}
+.metricIcon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:24px;background:#fde5ef;color:#df2875;flex:0 0 auto}
+.metricIcon.purple{background:#f1e6ff;color:#8c3bc0}.metricIcon.blue{background:#e4f3ff;color:#2676bd}.metricIcon.gold{background:#fff4d8;color:#a77a15}
+.adminMetric small{display:block;color:#756d78;font-weight:700}.adminMetric strong{display:block;font-size:24px;margin-top:5px;white-space:nowrap}
+.adminSplit{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.9fr);gap:14px;margin-bottom:16px}
+.adminPanel{background:#fff;border:1px solid #eee8ef;border-radius:17px;padding:17px;box-shadow:0 5px 18px #21102008;min-width:0}
+.adminPanelHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.adminPanelHead h2{font-size:18px;margin:0}.adminPanelHead a{color:#c51d6b;font-weight:800;font-size:13px}
+.adminChart{width:100%;height:220px;display:block}.adminChart text{font:11px Arial;fill:#777}
+.adminRecent{display:grid;gap:0}.adminRecentRow{display:grid;grid-template-columns:38px minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f1edf1;font-size:13px}
+.adminRecentRow:last-child{border:0}.adminBag{width:36px;height:36px;border-radius:11px;background:#fde8f0;display:grid;place-items:center;color:#d91e70}
+.adminStatus{padding:6px 9px;border-radius:30px;background:#e6f7eb;color:#16813a;font-weight:800;font-size:11px;white-space:nowrap}
+.adminStatus.pending{background:#fff3d9;color:#9a6810}.adminStatus.preparing{background:#f0e7ff;color:#7138a4}.adminStatus.shipped{background:#e6f2ff;color:#2566a4}
+.adminBottomGrid{display:grid;grid-template-columns:1fr 1fr .95fr;gap:14px}
+.adminMiniRow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1edf1;font-size:13px}
+.adminMiniRow img{width:43px;height:52px;object-fit:cover;border-radius:8px;background:#f5f1f4}
+.adminStockTag{margin-left:auto;border-radius:20px;background:#ffe5e7;color:#bd293a;padding:5px 8px;font-weight:800;white-space:nowrap}
+.adminQuick{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.adminQuick a{border-radius:12px;padding:17px 9px;text-align:center;background:#fde6ef;color:#8d1b52;font-weight:800;font-size:13px}
+.adminQuick a:nth-child(2){background:#f2e6fc;color:#71329b}.adminQuick a:nth-child(3){background:#e5f3ff;color:#286ba4}.adminQuick a:nth-child(4){background:#fff3d8;color:#88610e}
+.adminMobileMenu{display:none}
+@media(max-width:1050px){.adminStudio{grid-template-columns:210px minmax(0,1fr)}.adminMetrics{grid-template-columns:repeat(2,1fr)}.adminBottomGrid{grid-template-columns:1fr 1fr}.adminBottomGrid>.adminPanel:last-child{grid-column:1/-1}}
+@media(max-width:700px){.adminStudio{display:block}.adminSide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:12px;gap:6px}.adminBrand{grid-column:1/-1;padding:5px 0 10px;margin:0}.adminBrand img{height:48px}.adminBrand b{font-size:17px}.adminSide a{font-size:12px;padding:10px 8px}.adminSide .sideBottom{margin:0}.adminMain{padding:15px 12px 28px}.adminTop{align-items:flex-start}.adminSearch{display:none}.adminWelcome h1{font-size:24px}.adminMetrics{gap:8px}.adminMetric{padding:11px;gap:8px}.metricIcon{width:40px;height:40px;font-size:19px}.adminMetric strong{font-size:19px}.adminSplit,.adminBottomGrid{grid-template-columns:1fr}.adminBottomGrid>.adminPanel:last-child{grid-column:auto}.adminRecentRow{grid-template-columns:34px minmax(0,1fr) auto}.adminRecentRow .orderDate{display:none}}
+
 </style></head><body>
 <div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">🚚</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">🎧</span> Service client 7j/7</div><div class="topitem"><span class="pink">🛡</span> Paiement à la livraison</div></div><div>Instagram · TikTok · Facebook · ☎ +212 664-624776</div></div></div>
 <header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
@@ -294,7 +335,46 @@ async function saveProduct(id){
 }
 async function toggleProduct(id,value){const {error}=await sb.from('products').update({is_active:value}).eq('id',id);if(error)return alert(error.message);adminProducts()}
 async function deleteProduct(id){if(!confirm('Supprimer ce produit ?'))return;const {error}=await sb.from('products').delete().eq('id',id);if(error)return alert(error.message);adminProducts()}
-async function admin(){const s=(await sb.auth.getSession()).data.session;if(!s){app.innerHTML='<section class="section wrap admin" style="display:block"><h1>Admin</h1><input class="input" id="em" placeholder="Email"><input class="input" id="pw" type="password" placeholder="Mot de passe"><button class="btn" onclick="login()">Connexion</button><p class="muted">Compte admin Supabase requis.</p></section>';return}const {data}=await sb.from('admin_users').select('user_id').eq('user_id',s.user.id).maybeSingle();if(!data){await sb.auth.signOut();return admin()}app.innerHTML='<section class="section wrap admin" style="display:block"><div class="adminHead"><div><h1>⚙️ Administration</h1><p class="muted">Connecté: '+esc(s.user.email||'')+'</p></div><button class="btn dark" onclick="logout()">Déconnexion</button></div><div class="adminNav"><a class="btn" href="#admin/orders">📦 Commandes</a><a class="btn" href="#admin/products">🛍 Produits</a><a class="btn" href="#admin/categories">🏷 Catégories</a><a class="btn" href="#admin/settings">🎨 Site & thème</a><a class="btn dark" href="#/">👁 Voir le site</a></div><div id="adminStats" class="adminStats"><div class="msg">Chargement des statistiques…</div></div><h2 style="margin-top:32px">Dernières commandes</h2><div id="orders">Chargement…</div></section>';loadOrders();loadAdminStats()}
+async function admin(){
+const s=(await sb.auth.getSession()).data.session;
+if(!s){app.innerHTML='<section class="section wrap admin" style="display:block;max-width:480px;margin:60px auto"><h1>Connexion Admin</h1><input class="input" id="em" placeholder="Email"><input class="input" id="pw" type="password" placeholder="Mot de passe"><button class="btn" onclick="login()">Connexion</button><p class="muted">Accès réservé aux administrateurs autorisés.</p></section>';return}
+const {data}=await sb.from('admin_users').select('user_id').eq('user_id',s.user.id).maybeSingle();
+if(!data){await sb.auth.signOut();return admin()}
+const nav=[['#/admin','▦','Tableau de bord'],['#/admin/orders','▣','Commandes'],['#/admin/products','◇','Produits'],['#/admin/categories','▤','Catégories'],['#/admin/stock','▦','Stock & variantes'],['#/admin/clients','♙','Clients'],['#/admin/promotions','◇','Promotions & codes'],['#/admin/banners','▧','Bannières'],['#/admin/content','▤','Contenu du site'],['#/admin/settings','⚙','Paramètres']];
+app.innerHTML='<section class="adminStudio"><aside class="adminSide"><div class="adminBrand"><img src="./logo.svg" alt="Moustapha Shop"><b>Moustapha Shop</b><small>Espace Admin</small></div>'+nav.map(([href,ic,label])=>'<a href="'+href+'" class="'+((location.hash||'#/')===href?'active':'')+'"><span>'+ic+'</span>'+label+'</a>').join('')+'<a class="sideBottom" href="#/">↗ Voir le site</a></aside><main class="adminMain"><div class="adminTop"><div class="adminSearch">⌕ &nbsp; Rechercher une commande, un produit, un client…</div><div class="adminUser"><span class="adminAvatar">♙</span><span>'+(esc(s.user.email||'Admin NDR'))+'<br><small class="muted">Administrateur</small></span><button class="btn dark" onclick="logout()">Sortir</button></div></div><div class="adminWelcome"><h1>Tableau de bord</h1><p>Bienvenue dans l’espace d’administration</p></div><div id="adminDashboard"><div class="msg">Chargement des données réelles…</div></div></main></section>';
+loadAdminDashboard();
+}
+async function loadAdminDashboard(){
+const root=document.querySelector('#adminDashboard');if(!root)return;
+const [ordersR,productsR,catsR,itemsR]=await Promise.all([
+sb.from('orders').select('*').order('created_at',{ascending:false}).limit(300),
+sb.from('products').select('*').order('created_at',{ascending:false}).limit(500),
+sb.from('categories').select('id,name'),
+sb.from('order_items').select('*').limit(1000)
+]);
+if(ordersR.error||productsR.error||itemsR.error){root.innerHTML='<div class="adminPanel">تعذر تحميل الإحصائيات: '+esc((ordersR.error||productsR.error||itemsR.error).message)+'</div>';return}
+const orders=ordersR.data||[],products=productsR.data||[],items=itemsR.data||[];
+const now=new Date(),monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+const monthOrders=orders.filter(o=>new Date(o.created_at)>=monthStart&&!['cancelled'].includes(o.status));
+const revenue=monthOrders.reduce((n,o)=>n+Number(o.total||0),0);
+const clients=new Set(orders.map(o=>String(o.phone||'').trim()).filter(Boolean)).size;
+const pending=orders.filter(o=>o.status==='pending').length;
+const fmt=n=>Number(n||0).toLocaleString('fr-MA',{maximumFractionDigits:0})+' DH';
+const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d});
+const vals=days.map(d=>orders.filter(o=>{const x=new Date(o.created_at);return x.toDateString()===d.toDateString()&&o.status!=='cancelled'}).reduce((n,o)=>n+Number(o.total||0),0));
+const max=Math.max(1,...vals),pts=vals.map((v,i)=>({x:42+i*86,y:174-(v/max)*135}));
+const path=pts.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join(' ');
+const chart='<svg class="adminChart" viewBox="0 0 600 220" preserveAspectRatio="none"><defs><linearGradient id="adminFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ed2870" stop-opacity=".28"/><stop offset="1" stop-color="#ed2870" stop-opacity=".02"/></linearGradient></defs>'+[40,80,120,160].map(y=>'<line x1="38" y1="'+y+'" x2="590" y2="'+y+'" stroke="#eee"/>').join('')+'<path d="'+path+' L '+pts[6].x+' 180 L '+pts[0].x+' 180 Z" fill="url(#adminFill)"/><path d="'+path+'" fill="none" stroke="#df2474" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+pts.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="#df2474" stroke="#fff" stroke-width="2"/>').join('')+days.map((d,i)=>'<text x="'+pts[i].x+'" y="204" text-anchor="middle">'+d.toLocaleDateString('fr-MA',{day:'2-digit',month:'short'})+'</text>').join('')+'</svg>';
+const statusLabel={pending:'En attente',confirmed:'Confirmée',preparing:'En préparation',shipped:'Expédiée',delivered:'Livrée',cancelled:'Annulée'};
+const recent=orders.slice(0,4).map(o=>'<div class="adminRecentRow"><span class="adminBag">♧</span><b>#'+esc(o.order_number||'—')+'</b><span><b>'+esc(o.customer_name||'Client')+'</b><br><small class="muted orderDate">'+new Date(o.created_at).toLocaleString('fr-MA')+'</small></span><span class="adminStatus '+(o.status==='pending'?'pending':o.status==='preparing'?'preparing':o.status==='shipped'?'shipped':'')+'">'+(statusLabel[o.status]||esc(o.status))+'</span><b>'+fmt(o.total)+'</b></div>').join('')||'<p class="muted">Aucune commande pour le moment.</p>';
+const sold={};items.forEach(i=>{sold[i.product_name]=(sold[i.product_name]||0)+Number(i.quantity||0)});
+const best=Object.entries(sold).sort((a,b)=>b[1]-a[1]).slice(0,3);
+const bestHtml=best.map(([name,qty])=>{const p=products.find(x=>x.name===name);return '<div class="adminMiniRow">'+(p?.images?.[0]?'<img src="'+esc(p.images[0])+'">':'<span class="adminBag">◇</span>')+'<span><b>'+esc(name)+'</b><br><small class="muted">'+qty+' ventes</small></span><b style="margin-left:auto">'+(p?fmt(p.price):'')+'</b></div>'}).join('')||'<p class="muted">Les meilleures ventes apparaîtront après les commandes.</p>';
+const low=products.filter(p=>Number(p.stock||0)<=5&&p.is_active).sort((a,b)=>Number(a.stock)-Number(b.stock)).slice(0,4);
+const lowHtml=low.map(p=>'<div class="adminMiniRow">'+(p.images?.[0]?'<img src="'+esc(p.images[0])+'">':'<span class="adminBag">◇</span>')+'<b>'+esc(p.name)+'</b><span class="adminStockTag">Stock : '+Number(p.stock||0)+'</span></div>').join('')||'<p class="muted">Aucune alerte de stock.</p>';
+root.innerHTML='<div class="adminMetrics"><div class="adminMetric"><span class="metricIcon">▣</span><div><small>Commandes</small><strong>'+orders.length+'</strong></div></div><div class="adminMetric"><span class="metricIcon purple">▱</span><div><small>Chiffre d’affaires · ce mois</small><strong>'+fmt(revenue)+'</strong></div></div><div class="adminMetric"><span class="metricIcon blue">♙</span><div><small>Clients</small><strong>'+clients+'</strong></div></div><div class="adminMetric"><span class="metricIcon gold">◇</span><div><small>Produits</small><strong>'+products.length+'</strong></div></div></div><div class="adminSplit"><section class="adminPanel"><div class="adminPanelHead"><h2>Évolution des ventes · 7 jours</h2><b style="color:#c51d6b">CA : '+fmt(revenue)+'</b></div>'+chart+'</section><section class="adminPanel"><div class="adminPanelHead"><h2>Commandes récentes</h2><a href="#admin/orders">Voir tout →</a></div><div class="adminRecent">'+recent+'</div><p class="muted" style="font-size:12px">Commandes en attente : '+pending+'</p></section></div><div class="adminBottomGrid"><section class="adminPanel"><div class="adminPanelHead"><h2>Produits les plus vendus</h2><a href="#admin/products">Voir tout →</a></div>'+bestHtml+'</section><section class="adminPanel"><div class="adminPanelHead"><h2>⚠ Alertes de stock</h2><a href="#admin/stock">Voir tout →</a></div>'+lowHtml+'</section><section class="adminPanel"><div class="adminPanelHead"><h2>Actions rapides</h2></div><div class="adminQuick"><a href="#admin/products">＋<br>Ajouter produit</a><a href="#admin/orders">▣<br>Voir commandes</a><a href="#admin/stock">◇<br>Gérer stock</a><a href="#admin/settings">⚙<br>Paramètres</a></div></section></div>';
+}
+
 async function login(){const {error}=await sb.auth.signInWithPassword({email:em.value,password:pw.value});if(error)return alert(error.message);const {data:claimed,error:claimError}=await sb.rpc('claim_first_admin');if(claimError)return alert(claimError.message);if(!claimed)return alert('Ce compte n’est pas administrateur.');admin()}
 async function logout(){await sb.auth.signOut();admin()}
 async function loadAdminStats(){const el=document.querySelector('#adminStats');if(!el)return;const [{count:pc},{count:cc},{count:oc}]=await Promise.all([sb.from('products').select('*',{count:'exact',head:true}),sb.from('categories').select('*',{count:'exact',head:true}),sb.from('orders').select('*',{count:'exact',head:true})]);el.innerHTML='<div class="stat"><b>'+Number(pc||0)+'</b><span>Produits</span></div><div class="stat"><b>'+Number(cc||0)+'</b><span>Catégories</span></div><div class="stat"><b>'+Number(oc||0)+'</b><span>Commandes</span></div>'}
