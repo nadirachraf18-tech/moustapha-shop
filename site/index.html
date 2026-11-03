@@ -164,8 +164,41 @@ header{background:rgba(12,8,11,.97);box-shadow:0 8px 28px rgba(0,0,0,.12)}
 @media(max-width:1050px){.adminStudio{grid-template-columns:210px minmax(0,1fr)}.adminMetrics{grid-template-columns:repeat(2,1fr)}.adminBottomGrid{grid-template-columns:1fr 1fr}.adminBottomGrid>.adminPanel:last-child{grid-column:1/-1}}
 @media(max-width:700px){.adminStudio{display:block}.adminSide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:12px;gap:6px}.adminBrand{grid-column:1/-1;padding:5px 0 10px;margin:0}.adminBrand img{height:48px}.adminBrand b{font-size:17px}.adminSide a{font-size:12px;padding:10px 8px}.adminSide .sideBottom{margin:0}.adminMain{padding:15px 12px 28px}.adminTop{align-items:flex-start}.adminSearch{display:none}.adminWelcome h1{font-size:24px}.adminMetrics{gap:8px}.adminMetric{padding:11px;gap:8px}.metricIcon{width:40px;height:40px;font-size:19px}.adminMetric strong{font-size:19px}.adminSplit,.adminBottomGrid{grid-template-columns:1fr}.adminBottomGrid>.adminPanel:last-child{grid-column:auto}.adminRecentRow{grid-template-columns:34px minmax(0,1fr) auto}.adminRecentRow .orderDate{display:none}}
 
+
+/* Fashion storefront refresh — blush, ivory and charcoal */
+.top{background:#f9dce8;color:#201820;border:0}.topbar{height:42px;font-size:13px}.topitem{font-weight:700}.topitem .pink{color:#cf2674}
+header{background:#fffdfd;border-bottom:1px solid #f4e8ee;box-shadow:0 4px 18px #4a17300a}
+.bar{height:102px;gap:24px}.logoimg{width:310px;height:86px;filter:none!important}
+.search{max-width:560px;border:1px solid #e6dce2;border-radius:17px;overflow:hidden;box-shadow:0 3px 12px #4a173008}
+.search input{background:transparent;padding:16px 18px;font-size:15px}.search button{background:#fff!important;color:#1e1720!important;width:54px}
+.actions{color:#211a22;gap:25px}.action{font-size:13px}.action b{font-size:24px;color:#211a22}.cartbtn{background:#d82478!important;border-radius:30px;padding:10px 15px}
+.nav{background:#17131a;border:0}.navin{height:49px;justify-content:flex-start;gap:8px}.navin a{padding:13px 18px;border-radius:0;font-size:14px}.navin a.active,.navin a:hover{background:#d92779!important}
+.hero{min-height:355px;background:linear-gradient(100deg,#fce5ed 0%,#f7d4e1 48%,#eab3c9 100%)!important;color:#4b102b;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 78% 42%,#fff8 0 12%,transparent 34%),linear-gradient(90deg,#fff4f7aa,transparent 75%);z-index:0}
+.hero:after{right:0;top:0;width:53%;height:100%;background:linear-gradient(90deg,transparent,#d78ba9 90%)!important;opacity:.35}
+.hero .wrap{min-height:355px;align-items:center}.heroText{max-width:54%;padding:35px 0;z-index:3}
+.hero .script{font-size:clamp(35px,4vw,57px);color:#7b1643;font-family:"Brush Script MT",cursive}
+.hero h1{font-family:Georgia,serif;font-size:clamp(36px,4vw,57px);line-height:1.03;color:#68132f;margin:4px 0 12px;text-transform:uppercase}
+.hero p{font-family:Georgia,serif;font-size:18px;color:#6d2a43;max-width:490px}
+.heroBtn{background:linear-gradient(90deg,#df287e,#b81764)!important;border-radius:30px;padding:13px 25px}
+.heroMedia{right:3%;width:42%;height:320px;border:5px solid #fff9;border-radius:48% 48% 18px 18px;box-shadow:0 16px 45px #7c204233}
+.services{display:none}
+.categories{padding:25px 0 14px}.catgrid{grid-template-columns:repeat(8,minmax(0,1fr));gap:12px}
+.cat{background:#fbe8ef;border:1px solid #f5d8e4;border-radius:18px;padding:7px 7px 10px;box-shadow:0 4px 10px #50152a0c;overflow:hidden}
+.catpic{width:100%;height:116px;border-radius:13px;background:#f6dce6;margin:0 auto 7px;overflow:hidden;display:block;font-size:0}
+.catpic img{width:100%;height:100%;object-fit:cover;display:block}
+.cat b{font-size:14px;color:#211820}
+.section{padding:28px 0 36px}.sectionTitle{margin-bottom:17px}.sectionTitle h2{font-size:27px;color:#20171d}.sectionTitle h2:after{content:"";display:block;width:54px;height:3px;background:#d92779;margin-top:7px;border-radius:4px}.sectionTitle p{display:none}
+.grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.card{border:1px solid #f1e4ea;border-radius:15px;box-shadow:0 5px 18px #4a17300a;transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-3px);box-shadow:0 10px 25px #4a173018}
+.card .pic{height:270px;background:#fbf0f4;position:relative}.card .pic img{object-fit:cover}
+.card .body{padding:12px}.card .body h3{font-size:15px;margin:0 0 8px}.card .btn{padding:9px 11px;font-size:12px}.card .btn.dark{background:#211a22}
+.price{color:#d92779!important}
+@media(max-width:850px){.wrap{padding-left:16px;padding-right:16px}.topitems{gap:12px}.topitem:nth-child(2){display:none}.topbar>div:last-child{font-size:11px}.bar{height:auto;min-height:85px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px;gap:10px}.logoimg{width:190px;height:58px}.search{order:3;flex:1 1 100%;max-width:none}.actions{margin-left:auto;gap:12px}.action span{font-size:11px}.action b{font-size:20px}.navin{justify-content:flex-start;height:45px}.navin a{padding:12px 13px;font-size:13px}.hero,.hero .wrap{min-height:320px}.heroText{max-width:65%;padding:24px 0}.heroMedia{right:2%;width:38%;height:250px}.hero p{font-size:15px}.catgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.catpic{height:100px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card .pic{height:220px}}
+@media(max-width:480px){.topbar{height:auto;min-height:36px}.topitems{gap:9px}.topitem{font-size:10px}.topitem:nth-child(3){display:none}.topbar>div:last-child{display:none}.logoimg{width:160px;height:52px}.actions{gap:9px}.action b{font-size:18px}.action span{font-size:10px}.cartbtn{padding:8px 10px}.hero,.hero .wrap{min-height:290px}.heroText{max-width:100%;padding:26px 0 125px}.hero .script{font-size:36px}.hero h1{font-size:34px;max-width:290px}.hero p{font-size:14px;max-width:270px}.heroMedia{right:4%;bottom:10px;top:auto;transform:none;width:38%;height:118px;border-radius:50% 50% 12px 12px;border-width:3px}.hero:after{width:48%}.catpic{height:86px}.cat b{font-size:12px}.sectionTitle h2{font-size:23px}.card .pic{height:205px}.card .body{padding:10px}.card .body h3{font-size:13px}}
+
 </style></head><body>
-<div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">🚚</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">🎧</span> Service client 7j/7</div><div class="topitem"><span class="pink">🛡</span> Paiement à la livraison</div></div><div>Instagram · TikTok · Facebook · ☎ +212 664-624776</div></div></div>
+<div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">♧</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">↻</span> Échange & retour facile</div><div class="topitem"><span class="pink">♡</span> Paiement à la livraison</div></div><div>Suivez-nous : Instagram · TikTok · Facebook</div></div></div>
 <header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
 <div class="nav"><div class="wrap navin"><a href="#/" class="active">Accueil</a><a href="#shop">Nouveautés</a><a href="#shop">Promotions</a><a href="#contact">À propos</a><a href="#contact">Contact</a></div></div>
 <main id="app"></main>
@@ -197,11 +230,18 @@ function bindCategoryButtons(){
 document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>filterCat(b.dataset.cat)));
 }
 function home(){
-const catHtml=cats.slice(0,9).map((c,i)=>'<button class="cat" data-cat="'+esc(c.id)+'"><div class="catpic">'+['👗','👚','🧥','👖','👟','👜','🕶️','💄','🎁'][i]+'</div><b>'+esc(c.name)+'</b></button>').join('');
+const categoryIcons=['👗','👚','🧥','👖','👟','👜','🕶️','💄','🎁'];
+const catHtml=cats.slice(0,8).map((cat,i)=>{
+ const product=products.find(p=>p.category_id===cat.id&&p.images?.[0]);
+ const image=product?.images?.[0];
+ return '<button class="cat" data-cat="'+esc(cat.id)+'"><div class="catpic">'+(image?'<img src="'+esc(image)+'" alt="'+esc(cat.name)+'">':categoryIcons[i%categoryIcons.length])+'</div><b>'+esc(cat.name)+'</b></button>';
+}).join('');
 const heroVideos=(()=>{try{return JSON.parse(setting('hero_videos','[]'))||[]}catch(e){return []}})();
-const heroVideoHtml=heroVideos.length?'<div class="heroMedia"><div class="heroVideoBadge">🎬 Nos produits</div><video id="heroProductVideo" autoplay muted playsinline preload="metadata" src="'+esc(heroVideos[0])+'"></video><div class="heroVideoDots">'+heroVideos.map((u,i)=>'<button type="button" class="heroDot '+(i===0?'active':'')+'" data-video-index="'+i+'" aria-label="Vidéo '+(i+1)+'"></button>').join('')+'</div></div>':'';
-app.innerHTML='<section class="hero" style="background-image:linear-gradient(90deg,rgba(250,248,245,.96) 0%,rgba(250,248,245,.88) 28%,rgba(250,248,245,.15) 58%,rgba(250,248,245,0) 100%),url(https://www.masarishop.com/media/wysiwyg/Editorial/the-iconic-she/image4.jpg)"><div class="wrap"><div class="heroText"><p class="script">'+esc(setting('hero_title','Votre Style'))+'</p><h1>'+esc(setting('hero_subtitle','Notre Passion'))+'</h1><p>'+esc(setting('hero_description','Des vêtements, chaussures et sacs tendance pour toutes les femmes.'))+'</p><a class="heroBtn" href="#shop">Découvrir maintenant →</a><div class="services"><div class="service"><i>🚚</i><span><b>Livraison rapide</b><br>Partout au Maroc</span></div><div class="service"><i>🛡</i><span><b>Paiement</b><br>à la livraison</span></div><div class="service"><i>🎧</i><span><b>Service client</b><br>7j/7</span></div></div></div></div></section><section class="categories"><div class="wrap"><div class="catgrid">'+catHtml+'</div></div></section><section class="section wrap"><div class="sectionTitle"><div><h2>Nouveautés</h2><p>Découvrez nos dernières arrivées</p></div><a class="btn dark" href="#shop">Voir tout →</a></div><div id="homegrid" class="grid">'+cards(products.slice(0,8))+'</div></section>';
-if(heroVideos.length) bindHeroVideos(heroVideos);
+const heroImage=products.find(p=>p.images?.[0])?.images?.[0]||'';
+const heroMedia=heroVideos.length?'<div class="heroMedia"><div class="heroVideoBadge">🎬 Nouvelle collection</div><video id="heroProductVideo" autoplay muted playsinline loop preload="metadata" src="'+esc(heroVideos[0])+'"></video><div class="heroVideoDots">'+heroVideos.map((u,i)=>'<button type="button" class="heroDot '+(i===0?'active':'')+'" data-video-index="'+i+'" aria-label="Vidéo '+(i+1)+'"></button>').join('')+'</div></div>':(heroImage?'<div class="heroMedia"><img src="'+esc(heroImage)+'" alt="Collection Moustapha Shop" style="width:100%;height:100%;object-fit:cover"></div>':'');
+const latest=products.slice(0,8);
+app.innerHTML='<section class="hero"><div class="wrap"><div class="heroText"><p class="script">Nouvelle Collection</p><h1>'+esc(setting('hero_title','AUTOMNE - HIVER'))+'</h1><p>'+esc(setting('hero_subtitle','Élégance · Confort · Tendance'))+'</p><a class="heroBtn" href="#shop">Découvrir la collection →</a></div>'+heroMedia+'</div></section><section class="categories"><div class="wrap"><div class="sectionTitle"><h2>Nos Catégories</h2><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div class="catgrid">'+catHtml+'</div></div></section><section class="section wrap"><div class="sectionTitle"><div><h2>Nouveautés <span style="display:inline-block;background:#d92779;color:#fff;border-radius:20px;padding:4px 9px;font-size:12px;vertical-align:middle">New</span></h2></div><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div id="homegrid" class="grid">'+cards(latest)+'</div></section>';
+if(heroVideos.length)bindHeroVideos(heroVideos);
 bindCategoryButtons();
 }
 function shop(){
