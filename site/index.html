@@ -248,6 +248,16 @@ header{background:#fffdfd;border-bottom:1px solid #f4e8ee;box-shadow:0 4px 18px 
   .heroMedia{height:160px}
 }
 
+
+#shopLoadNotice:empty{display:none}#shopLoadNotice:not(:empty){padding-top:12px}
+@media(max-width:600px){
+ .navin a{color:#fff!important;text-shadow:none!important}
+ .navin a:not(.active){opacity:1!important;color:#fff!important}
+ .hero .wrap{min-height:0!important}
+ .heroMedia{display:block!important}
+ .categories .catgrid:empty:after{content:'Les catégories arrivent bientôt';display:block;color:#8b6677;padding:15px}
+}
+
 </style></head><body>
 <div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">♧</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">↻</span> Échange & retour facile</div><div class="topitem"><span class="pink">♡</span> Paiement à la livraison</div></div><div>Suivez-nous : Instagram · TikTok · Facebook</div></div></div>
 <header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
@@ -263,7 +273,22 @@ const setting=(k,f='')=>settings[k]??f;
 function applyTheme(){let old=document.querySelector('#dynamicTheme');if(old)old.remove();const pink=setting('primary_color','#ed2870'),gold=setting('accent_color','#d4af37');const st=document.createElement('style');st.id='dynamicTheme';st.textContent=`.navin a:hover,.navin a.active,.heroBtn,.btn:not(.dark),.search button,.cartbtn{background:${pink}!important}.price{color:${pink}!important}.pink,.service i{color:${pink}!important}.chip{background:${pink}12!important;border-color:${pink}55!important;color:${pink}!important}.hero:after{background:radial-gradient(circle at 50% 40%,${pink}aa,transparent 48%),linear-gradient(120deg,transparent,${gold}55)!important}.logoimg{filter:drop-shadow(0 0 10px ${pink}22)}`;document.head.appendChild(st);}
 function siteText(){document.title=setting('shop_name','Moustapha Shop')+' – Boutique en ligne';const top=document.querySelector('.topbar>div:last-child');if(top)top.innerHTML=(setting('instagram_url')?'Instagram':'')+' · '+(setting('tiktok_url')?'TikTok':'')+' · '+(setting('facebook_url')?'Facebook':'')+' · ☎ '+esc(setting('phone','+212 664-624776'));const logo=document.querySelector('#siteLogo');if(logo){logo.src='./logo.svg?v=4';logo.removeAttribute('srcset');}}
 const money=n=>new Intl.NumberFormat('fr-MA',{style:'currency',currency:'MAD',maximumFractionDigits:0}).format(Number(n||0));
-async function load(){const [c,p,s]=await Promise.all([sb.from('categories').select('*').eq('is_active',true).order('sort_order'),sb.from('products').select('*').eq('is_active',true).order('created_at',{ascending:false}),sb.from('site_settings').select('key,value')]);cats=c.data||[];products=p.data||[];settings=Object.fromEntries((s.data||[]).map(x=>[x.key,x.value]));applyTheme();siteText();render();}
+async function load(){
+const [cr,pr,sr]=await Promise.all([
+ sb.from('categories').select('*').eq('is_active',true).order('sort_order'),
+ sb.from('products').select('*').eq('is_active',true).order('created_at',{ascending:false}),
+ sb.from('site_settings').select('key,value')
+]);
+cats=cr.data||[];products=pr.data||[];settings=Object.fromEntries((sr.data||[]).map(x=>[x.key,x.value]));
+window.__shopLoadErrors={categories:cr.error?.message||null,products:pr.error?.message||null,settings:sr.error?.message||null};
+applyTheme();siteText();render();
+const issue=cr.error||pr.error||sr.error;
+if(issue){
+ console.error('Moustapha Shop data loading error',window.__shopLoadErrors);
+ const box=document.querySelector('#shopLoadNotice');
+ if(box)box.innerHTML='<div class="msg danger"><b>تعذر تحميل بعض بيانات المتجر.</b><p style="margin:6px 0">'+esc(issue.message||'Erreur de connexion')+'</p><button class="btn" onclick="load()">إعادة المحاولة</button></div>';
+}
+}
 function render(){let hash=location.hash||'#/';if(hash==='#admin/settings'||hash==='#admin/promotions'||hash==='#admin/banners'||hash==='#admin/content')return adminSettings();if(hash==='#admin/stock')return adminStock();if(hash==='#admin/clients')return adminClients();if(hash==='#admin/products')return adminProducts();if(hash==='#admin/categories')return adminCategories();if(hash==='#admin/orders')return adminOrders();if(hash==='#admin'||hash.startsWith('#admin/'))return admin();if(hash==='#shop')return shop();if(hash==='#contact')return contact();if(hash==='#track')return trackOrder();home()}
 function bindHeroVideos(list){
 const video=document.querySelector('#heroProductVideo');if(!video)return;
@@ -291,7 +316,7 @@ const heroVideos=(()=>{try{return JSON.parse(setting('hero_videos','[]'))||[]}ca
 const heroImage=products.find(p=>p.images?.[0])?.images?.[0]||'';
 const heroMedia=heroVideos.length?'<div class="heroMedia"><div class="heroVideoBadge">🎬 Nouvelle collection</div><video id="heroProductVideo" autoplay muted playsinline loop preload="metadata" src="'+esc(heroVideos[0])+'"></video><div class="heroVideoDots">'+heroVideos.map((u,i)=>'<button type="button" class="heroDot '+(i===0?'active':'')+'" data-video-index="'+i+'" aria-label="Vidéo '+(i+1)+'"></button>').join('')+'</div></div>':(heroImage?'<div class="heroMedia"><img src="'+esc(heroImage)+'" alt="Collection Moustapha Shop" style="width:100%;height:100%;object-fit:cover"></div>':'');
 const latest=products.slice(0,8);
-app.innerHTML='<section class="hero"><div class="wrap"><div class="heroText"><p class="script">Nouvelle Collection</p><h1>'+esc(setting('hero_title','AUTOMNE - HIVER'))+'</h1><p>'+esc(setting('hero_subtitle','Élégance · Confort · Tendance'))+'</p><a class="heroBtn" href="#shop">Découvrir la collection →</a></div>'+heroMedia+'</div></section><section class="categories"><div class="wrap"><div class="sectionTitle"><h2>Nos Catégories</h2><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div class="catgrid">'+catHtml+'</div></div></section><section class="section wrap"><div class="sectionTitle"><div><h2>Nouveautés <span style="display:inline-block;background:#d92779;color:#fff;border-radius:20px;padding:4px 9px;font-size:12px;vertical-align:middle">New</span></h2></div><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div id="homegrid" class="grid">'+cards(latest)+'</div></section>';
+app.innerHTML='<div class="wrap" id="shopLoadNotice"></div><section class="hero"><div class="wrap"><div class="heroText"><p class="script">Nouvelle Collection</p><h1>'+esc(setting('hero_title','AUTOMNE - HIVER'))+'</h1><p>'+esc(setting('hero_subtitle','Élégance · Confort · Tendance'))+'</p><a class="heroBtn" href="#shop">Découvrir la collection →</a></div>'+heroMedia+'</div></section><section class="categories"><div class="wrap"><div class="sectionTitle"><h2>Nos Catégories</h2><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div class="catgrid">'+catHtml+'</div></div></section><section class="section wrap"><div class="sectionTitle"><div><h2>Nouveautés <span style="display:inline-block;background:#d92779;color:#fff;border-radius:20px;padding:4px 9px;font-size:12px;vertical-align:middle">New</span></h2></div><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div id="homegrid" class="grid">'+cards(latest)+'</div></section>';
 if(heroVideos.length)bindHeroVideos(heroVideos);
 bindCategoryButtons();
 }
