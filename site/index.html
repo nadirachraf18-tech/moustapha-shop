@@ -197,6 +197,20 @@ header{background:#fffdfd;border-bottom:1px solid #f4e8ee;box-shadow:0 4px 18px 
 @media(max-width:850px){.wrap{padding-left:16px;padding-right:16px}.topitems{gap:12px}.topitem:nth-child(2){display:none}.topbar>div:last-child{font-size:11px}.bar{height:auto;min-height:85px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px;gap:10px}.logoimg{width:190px;height:58px}.search{order:3;flex:1 1 100%;max-width:none}.actions{margin-left:auto;gap:12px}.action span{font-size:11px}.action b{font-size:20px}.navin{justify-content:flex-start;height:45px}.navin a{padding:12px 13px;font-size:13px}.hero,.hero .wrap{min-height:320px}.heroText{max-width:65%;padding:24px 0}.heroMedia{right:2%;width:38%;height:250px}.hero p{font-size:15px}.catgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.catpic{height:100px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card .pic{height:220px}}
 @media(max-width:480px){.topbar{height:auto;min-height:36px}.topitems{gap:9px}.topitem{font-size:10px}.topitem:nth-child(3){display:none}.topbar>div:last-child{display:none}.logoimg{width:160px;height:52px}.actions{gap:9px}.action b{font-size:18px}.action span{font-size:10px}.cartbtn{padding:8px 10px}.hero,.hero .wrap{min-height:290px}.heroText{max-width:100%;padding:26px 0 125px}.hero .script{font-size:36px}.hero h1{font-size:34px;max-width:290px}.hero p{font-size:14px;max-width:270px}.heroMedia{right:4%;bottom:10px;top:auto;transform:none;width:38%;height:118px;border-radius:50% 50% 12px 12px;border-width:3px}.hero:after{width:48%}.catpic{height:86px}.cat b{font-size:12px}.sectionTitle h2{font-size:23px}.card .pic{height:205px}.card .body{padding:10px}.card .body h3{font-size:13px}}
 
+
+/* Premium shopping interactions */
+.productActions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.wishBtn{position:absolute;top:10px;right:10px;width:36px;height:36px;border:0;border-radius:50%;background:#fff;color:#231923;font-size:20px;box-shadow:0 3px 12px #0002;cursor:pointer;z-index:2}
+.wishBtn.active{color:#df2879}
+.card .pic{position:relative}
+.shopTools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0}
+.shopTools input,.shopTools select{border:1px solid #eadde4;border-radius:12px;padding:11px 13px;background:#fff;color:#211820;min-width:145px}
+.recentStrip{display:flex;gap:12px;overflow:auto;padding:4px 2px 12px}
+.recentStrip .card{min-width:155px;max-width:155px}
+.recentStrip .pic{height:155px!important}
+.recentStrip .body{padding:9px}
+.recentStrip h3{font-size:12px}
+
 </style></head><body>
 <div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">♧</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">↻</span> Échange & retour facile</div><div class="topitem"><span class="pink">♡</span> Paiement à la livraison</div></div><div>Suivez-nous : Instagram · TikTok · Facebook</div></div></div>
 <header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
@@ -245,11 +259,18 @@ if(heroVideos.length)bindHeroVideos(heroVideos);
 bindCategoryButtons();
 }
 function shop(){
-app.innerHTML='<section class="section wrap"><div class="sectionTitle"><div><h1>Boutique</h1><p>Découvrez tous nos produits</p></div></div><div class="chips"><button class="chip" data-all> Tous </button>'+categoryButtons()+'</div><div id="grid" class="grid">'+cards(products)+'</div></section>';
-document.querySelector('[data-all]')?.addEventListener('click',shop);
+app.innerHTML='<section class="section wrap"><div class="sectionTitle"><div><h1>Boutique</h1><p>Découvrez tous nos produits</p></div></div><div class="chips"><button class="chip" data-all>Tous</button>'+categoryButtons()+'</div><div class="shopTools"><input id="shopSearch" placeholder="Rechercher un produit..." oninput="applyShopFilters()"><select id="shopSort" onchange="applyShopFilters()"><option value="new">Plus récents</option><option value="priceAsc">Prix croissant</option><option value="priceDesc">Prix décroissant</option><option value="name">Nom A-Z</option></select><select id="shopSize" onchange="applyShopFilters()"><option value="">Toutes les tailles</option>'+[...new Set(products.flatMap(p=>p.sizes||[]))].map(x=>'<option>'+esc(x)+'</option>').join('')+'</select><select id="shopColor" onchange="applyShopFilters()"><option value="">Toutes les couleurs</option>'+[...new Set(products.flatMap(p=>p.colors||[]))].map(x=>'<option>'+esc(x)+'</option>').join('')+'</select><select id="shopPrice" onchange="applyShopFilters()"><option value="">Tous les prix</option><option value="0-200">Moins de 200 DH</option><option value="200-400">200–400 DH</option><option value="400-999999">Plus de 400 DH</option></select></div><div id="grid" class="grid">'+cards(products)+'</div></section>';
+document.querySelector('[data-all]')?.addEventListener('click',()=>{document.querySelectorAll('.shopTools input,.shopTools select').forEach(x=>x.value='');applyShopFilters()});
 bindCategoryButtons();
 }
-function cards(list){if(!list.length)return '<div class="msg">Aucun produit disponible pour le moment.</div>';return list.map(p=>'<article class="card"><div class="pic" onclick="productDetails(\''+p.id+'\')" style="cursor:pointer">'+(p.images?.[0]?'<img src="'+esc(p.images[0])+'" alt="'+esc(p.name)+'">':'<span>Moustapha Shop</span>')+'</div><div class="body"><h3>'+esc(p.name)+'</h3><div><span class="price">'+money(p.price)+'</span>'+(p.old_price?'<span class="old">'+money(p.old_price)+'</span>':'')+'</div><button class="btn dark" style="margin-top:12px;margin-right:6px" onclick="productDetails(\''+p.id+'\')">Voir détails</button><button class="btn" style="margin-top:12px" onclick="productDetails(\''+p.id+'\')">Choisir taille / couleur</button></div></article>').join('')}
+function applyShopFilters(){
+const q=(document.querySelector('#shopSearch')?.value||'').toLowerCase(),size=document.querySelector('#shopSize')?.value||'',color=document.querySelector('#shopColor')?.value||'',price=document.querySelector('#shopPrice')?.value||'',sort=document.querySelector('#shopSort')?.value||'new';
+let list=products.filter(p=>(!q||(p.name||'').toLowerCase().includes(q)||(p.description||'').toLowerCase().includes(q))&&(!size||(p.sizes||[]).includes(size))&&(!color||(p.colors||[]).includes(color)));
+if(price){const [lo,hi]=price.split('-').map(Number);list=list.filter(p=>Number(p.price)>=lo&&Number(p.price)<=hi)}
+if(sort==='priceAsc')list.sort((a,b)=>Number(a.price)-Number(b.price));if(sort==='priceDesc')list.sort((a,b)=>Number(b.price)-Number(a.price));if(sort==='name')list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));if(sort==='new')list.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+const g=document.querySelector('#grid');if(g)g.innerHTML=cards(list);
+}
+function cards(list){if(!list.length)return '<div class="msg">Aucun produit disponible pour le moment.</div>';const w=getWishlist();return list.map(p=>'<article class="card"><div class="pic" onclick="productDetails(\''+p.id+'\')" style="cursor:pointer">'+(p.images?.[0]?'<img src="'+esc(p.images[0])+'" alt="'+esc(p.name)+'">':'<span>Moustapha Shop</span>')+'<button class="wishBtn '+(w.includes(p.id)?'active':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWishlist(\''+p.id+'\')">'+(w.includes(p.id)?'♥':'♡')+'</button></div><div class="body"><h3>'+esc(p.name)+'</h3><div><span class="price">'+money(p.price)+'</span>'+(p.old_price?'<span class="old">'+money(p.old_price)+'</span>':'')+'</div><div class="productActions"><button class="btn dark" style="margin-top:12px" onclick="productDetails(\''+p.id+'\')">Aperçu rapide</button></div></div></article>').join('')}
 function selectProductImage(url){
 const main=document.querySelector('#productMainImage');
 if(main) main.src=url;
@@ -258,7 +279,7 @@ const active=[...document.querySelectorAll('.productThumb')].find(x=>x.dataset.u
 if(active) active.style.borderColor='#ed2870';
 }
 function productDetails(id){
-const p=products.find(x=>x.id===id);if(!p)return;
+const p=products.find(x=>x.id===id);if(!p)return;rememberViewed(id);
 const colorImages=p.color_images&&typeof p.color_images==='object'?p.color_images:{};const firstColor=(p.colors||[]).find(v=>colorImages[v]);const mainImage=(firstColor&&colorImages[firstColor])||(p.images||[])[0]||'';const imgs=(p.images||[]).map((u,i)=>'<button type="button" class="productThumb" data-url="'+esc(u)+'" onclick="selectProductImage(this.dataset.url)" style="padding:0;border:2px solid '+(u===mainImage?'#ed2870':'#eee')+';background:#fff;border-radius:10px;overflow:hidden;cursor:pointer"><img src="'+esc(u)+'" alt="'+esc(p.name)+' photo '+(i+1)+'" style="display:block;width:82px;height:82px;object-fit:cover"></button>').join('');
 const ss=(p.sizes||[]).length?'<label><b>Taille</b><select class="input" id="detail_size"><option value="">Choisir la taille</option>'+(p.sizes||[]).map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('')+'</select></label>':'';
 const cc=(p.colors||[]).length?'<label><b>Couleur</b><select class="input" id="detail_color" onchange="setDetailColorImage(\''+esc(p.id)+'\',this.value)"><option value="">Choisir la couleur</option>'+(p.colors||[]).map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('')+'</select></label>':'';
