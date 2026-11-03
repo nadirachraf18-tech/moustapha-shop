@@ -1,26 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 180" role="img" aria-labelledby="title desc">
-  <title id="title">Moustapha Shop</title>
-  <desc id="desc">Logo Moustapha Shop en rose et blanc avec un emblème élégant de mode.</desc>
-  <defs>
-    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff78a7"/>
-      <stop offset="1" stop-color="#ed2870"/>
-    </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#f8df9b"/>
-      <stop offset="1" stop-color="#c99a42"/>
-    </linearGradient>
-  </defs>
-  <g transform="translate(18 12)">
-    <circle cx="78" cy="78" r="67" fill="none" stroke="url(#gold)" stroke-width="2.5"/>
-    <circle cx="78" cy="78" r="59" fill="none" stroke="#ffffff" stroke-opacity=".22" stroke-width="1"/>
-    <path d="M42 111V49h10l26 36 26-36h10v62h-13V70L78 101 55 70v41z" fill="url(#pink)"/>
-    <path d="M42 122h72" stroke="url(#gold)" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="78" cy="29" r="3" fill="url(#gold)"/>
-  </g>
-  <g>
-    <text x="180" y="88" fill="#fff" font-family="Georgia,'Times New Roman',serif" font-size="58" font-weight="600" letter-spacing="1.8">MOUSTAPHA</text>
-    <text x="184" y="137" fill="url(#pink)" font-family="Arial,sans-serif" font-size="29" font-weight="700" letter-spacing="12">SHOP</text>
-    <path d="M184 151h390" stroke="url(#gold)" stroke-width="1.5" opacity=".8"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 150" role="img" aria-labelledby="title desc">
+<title id="title">Moustapha Shop</title>
+<desc id="desc">Logo officiel Moustapha Shop avec deux sacs de shopping rose et ivoire et des anses dorées.</desc>
+<defs>
+  <linearGradient id="bagPink" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4b91"/><stop offset="1" stop-color="#e91e68"/></linearGradient>
+  <linearGradient id="bagCream" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff7ed"/><stop offset="1" stop-color="#f2dce5"/></linearGradient>
+  <linearGradient id="handle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe28a"/><stop offset="1" stop-color="#c99532"/></linearGradient>
+</defs>
+<g stroke="url(#handle)" stroke-width="3.4" fill="none" stroke-linecap="round">
+  <path d="M126 49c0-24 8-36 20-36s20 12 20 36"/>
+  <path d="M185 47c0-23 8-35 20-35s20 12 20 35"/>
+</g>
+<path d="M111 47h69l-10 64h-47z" fill="url(#bagPink)" stroke="#d91d61" stroke-width="1.5"/>
+<path d="M174 45h72l-17 66h-66z" fill="url(#bagCream)" stroke="#e5c5d2" stroke-width="1.5"/>
+<path d="M111 47h69" stroke="#ff8ab5" stroke-width="2" opacity=".9"/>
+<text x="180" y="137" text-anchor="middle" fill="#f03b7d" font-family="Georgia,'Times New Roman',serif" font-size="23" font-weight="700" letter-spacing="2.1">MOUSTAPHA SHOP</text>
 </svg>
