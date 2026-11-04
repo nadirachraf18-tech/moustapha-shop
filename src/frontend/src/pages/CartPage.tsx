@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useStoreSettings } from "@/hooks/use-catalog";
 import { formatPrice } from "@/lib/format";
+import { trackMetaEvent } from "@/lib/meta-pixel";
 import { buildOrderMessage, buildWhatsappOrderLink } from "@/lib/whatsapp";
 import { Link } from "@tanstack/react-router";
 import {
@@ -29,6 +30,16 @@ export function CartPage() {
   const shopName = settings?.shopName ?? "MOUSTAPHA SHOP";
 
   function handleReview(details: CustomerDetails) {
+    trackMetaEvent("InitiateCheckout", {
+      content_ids: lines.map((line) => line.productId),
+      contents: lines.map((line) => ({
+        id: line.productId,
+        quantity: line.quantity,
+      })),
+      num_items: itemCount,
+      value: subtotal,
+      currency: "MAD",
+    });
     setCustomer(details);
     setStep("review");
   }
@@ -40,6 +51,11 @@ export function CartPage() {
       subtotal,
       customerName: customer.name,
       note: [customer.phone, customer.address].filter(Boolean).join(" — "),
+    });
+    trackMetaEvent("Contact", {
+      content_ids: lines.map((line) => line.productId),
+      value: subtotal,
+      currency: "MAD",
     });
     window.open(link, "_blank", "noopener,noreferrer");
     clearCart();
