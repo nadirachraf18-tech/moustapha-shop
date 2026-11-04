@@ -353,7 +353,47 @@ function rememberViewed(id){
  a=[id,...a.filter(x=>x!==id)].slice(0,10);
  try{localStorage.setItem('ms_recent',JSON.stringify(a))}catch(e){}
 }
-function cards(list){if(!list.length)return '<div class="msg">Aucun produit disponible pour le moment.</div>';const w=getWishlist();return list.map(p=>'<article class="card"><div class="pic" onclick="productDetails(\''+p.id+'\')" style="cursor:pointer">'+(p.images?.[0]?'<img src="'+esc(p.images[0])+'" alt="'+esc(p.name)+'">':'<span>Moustapha Shop</span>')+'<button class="wishBtn '+(w.includes(p.id)?'active':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWishlist(\''+p.id+'\')">'+(w.includes(p.id)?'♥':'♡')+'</button></div><div class="body"><h3>'+esc(p.name)+'</h3><div><span class="price">'+money(p.price)+'</span>'+(p.old_price?'<span class="old">'+money(p.old_price)+'</span>':'')+'</div><div class="productActions"><button class="btn dark" style="margin-top:12px" onclick="productDetails(\''+p.id+'\')">Aperçu rapide</button></div></div></article>').join('')}
+function cards(list){if(!list.length)return '<div class="msg">Aucun produit disponible pour le moment.</div>';const w=getWishlist();return list.map(p=>'<article class="card"><div class="pic" onclick="productDetails(&quot;'+p.id+'&quot;)" style="cursor:pointer">'+(p.images?.[0]?'<img src="'+esc(p.images[0])+'" alt="'+esc(p.name)+'">':'<span>Moustapha Shop</span>')+'<button class="wishBtn '+(w.includes(p.id)?'active':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWishlist(&quot;'+p.id+'&quot;)">'+(w.includes(p.id)?'♥':'♡')+'</button></div><div class="body"><h3>'+esc(p.name)+'</h3><div><span class="price">'+money(p.price)+'</span>'+(p.old_price?'<span class="old">'+money(p.old_price)+'</span>':'')+'</div><div class="productActions" style="display:grid;grid-template-columns:1fr;gap:8px"><button class="btn" style="margin-top:12px;width:100%" onclick="quickOrder(&quot;'+p.id+'&quot;)">Commander</button><button class="btn dark" style="width:100%" onclick="productDetails(&quot;'+p.id+'&quot;)">Aperçu rapide</button></div></div></article>').join('')}
+function quickOrder(id){
+const p=products.find(x=>x.id===id);if(!p)return;
+const sizes=p.sizes||[],colors=p.colors||[];
+const sizeField=sizes.length?'<label><b>Taille *</b><select class="input" id="quick_size" required><option value="">Choisir la taille</option>'+sizes.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('')+'</select></label>':'';
+const colorField=colors.length?'<label><b>Couleur *</b><select class="input" id="quick_color" required onchange="quickVariantStock(&quot;'+id+'&quot;)"><option value="">Choisir la couleur</option>'+colors.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('')+'</select></label>':'';
+const photo=(p.images||[])[0]||'';
+modal.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Commander ce produit</h2><button class="btn dark" onclick="closePanel()">×</button></div><div class="item" style="margin:12px 0"><img src="'+esc(photo)+'" alt="'+esc(p.name)+'"><div><b>'+esc(p.name)+'</b><div class="price">'+money(p.price)+'</div></div></div><form id="quickOrderForm" onsubmit="submitQuickOrder(event,&quot;'+id+'&quot;)"><div class="row">'+sizeField+colorField+'</div><label>Quantité *<input class="input" id="quick_qty" type="number" min="1" step="1" value="1" required></label><div id="quickStock" class="muted">Stock disponible: '+Number(p.stock||0)+'</div><hr><h3>Informations de livraison</h3><label>Nom complet *<input class="input" id="quick_name" autocomplete="name" required placeholder="Votre nom complet"></label><label>Téléphone *<input class="input" id="quick_phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="06XXXXXXXX"></label><label>Ville *<input class="input" id="quick_city" autocomplete="address-level2" required placeholder="Votre ville"></label><label>Adresse complète *<textarea class="input" id="quick_address" autocomplete="street-address" required rows="2" placeholder="Quartier, rue, numéro…"></textarea></label><label>Note (facultatif)<textarea class="input" id="quick_note" rows="2" placeholder="Informations supplémentaires"></textarea></label><p class="muted">🚚 Livraison partout au Maroc · Paiement à la livraison</p><button class="btn" id="quickSubmit" type="submit" style="width:100%">Confirmer ma commande</button></form>';
+panel.classList.add('open');
+}
+function quickVariantStock(id){
+const p=products.find(x=>x.id===id);if(!p)return;
+const size=document.querySelector('#quick_size')?.value||'',color=document.querySelector('#quick_color')?.value||'';
+const ready=(!p.sizes?.length||!!size)&&(!p.colors?.length||!!color),key=color+'|'+size,has=p.variant_stock&&Object.keys(p.variant_stock).length;
+const stock=has?Number(p.variant_stock[key]||0):Number(p.stock||0);
+const out=document.querySelector('#quickStock'),qty=document.querySelector('#quick_qty'),btn=document.querySelector('#quickSubmit');
+if(out)out.textContent=ready?'Stock disponible: '+stock:'Choisissez la taille et la couleur';
+if(qty)qty.max=String(stock);
+if(btn)btn.disabled=ready&&stock<=0;
+}
+async function submitQuickOrder(event,id){
+event.preventDefault();
+const p=products.find(x=>x.id===id);if(!p)return;
+const name=document.querySelector('#quick_name').value.trim(),phone=document.querySelector('#quick_phone').value.trim(),city=document.querySelector('#quick_city').value.trim(),address=document.querySelector('#quick_address').value.trim(),note=document.querySelector('#quick_note').value.trim();
+const size=document.querySelector('#quick_size')?.value||null,color=document.querySelector('#quick_color')?.value||null,qty=Number(document.querySelector('#quick_qty')?.value||1);
+if(!name||!phone||!city||!address)return alert('Veuillez remplir les champs obligatoires.');
+if(!Number.isInteger(qty)||qty<1)return alert('Quantité invalide.');
+if((p.sizes||[]).length&&!size)return alert('Veuillez choisir la taille.');
+if((p.colors||[]).length&&!color)return alert('Veuillez choisir la couleur.');
+const has=p.variant_stock&&Object.keys(p.variant_stock).length,key=(color||'')+'|'+(size||''),stock=has?Number(p.variant_stock[key]||0):Number(p.stock||0);
+if(qty>stock)return alert('Stock insuffisant. Stock disponible: '+stock);
+const btn=document.querySelector('#quickSubmit');if(btn){btn.disabled=true;btn.textContent='Enregistrement…'}
+try{
+const {data,error}=await sb.rpc('create_order',{p_name:name,p_phone:phone,p_city:city,p_address:address,p_notes:note||null,p_items:[{product_id:id,quantity:qty,size,color}]});
+if(error)throw error;
+const orderNumber=data.order_number,photo=(p.color_images||{})[color]||p.images?.[0]||'';
+const waText='Bonjour Moustapha Shop 👋\\n\\nNouvelle commande #'+orderNumber+'\\n\\n• '+p.name+' × '+qty+(size?' | Taille: '+size:'')+(color?' | Couleur: '+color:'')+(photo?'\\n📸 Photo: '+photo:'')+'\\n\\nNom: '+name+'\\nTéléphone: '+phone+'\\nVille: '+city+'\\nAdresse: '+address+(note?'\\nNote: '+note:'')+'\\n\\nTotal: '+money(data.total);
+modal.innerHTML='<div class="msg success"><h2>Commande enregistrée ✓</h2><p>Votre commande <b>'+esc(orderNumber)+'</b> a été enregistrée.</p><p>Total: <b>'+money(data.total)+'</b></p><p>Ouverture de WhatsApp pour confirmer…</p></div>';
+setTimeout(()=>{window.location.href='https://wa.me/212664624776?text='+encodeURIComponent(waText)},400);
+}catch(e){if(btn){btn.disabled=false;btn.textContent='Confirmer ma commande'}alert(e.message||'Impossible d’enregistrer la commande.')}
+}
 function selectProductImage(url){
 const main=document.querySelector('#productMainImage');
 if(main) main.src=url;
@@ -661,6 +701,6 @@ async function deleteCategory(id){const {count}=await sb.from('products').select
 
 function parseOptions(v){return String(v||'').split(/[,;|\n]+/).map(x=>x.trim()).filter(Boolean)}
 function closePanel(){panel.classList.remove('open')}function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-window.addEventListener('hashchange',render);window.openCart=openCart;window.closePanel=closePanel;window.add=add;window.addFromDetails=addFromDetails;window.selectProductImage=selectProductImage;window.setDetailColorImage=setDetailColorImage;window.removeCart=removeCart;window.orderDetails=orderDetails;window.updateOrderStatus=updateOrderStatus;window.saveCategory=saveCategory;window.previewLogo=previewLogo;window.saveSiteVideos=saveSiteVideos;window.removeSiteVideo=removeSiteVideo;window.clearSiteVideos=clearSiteVideos;window.editCategory=editCategory;window.toggleCategory=toggleCategory;window.deleteCategory=deleteCategory;window.adminCategories=adminCategories;window.refreshVariantEditor=refreshVariantEditor;window.updateVariantTotal=updateVariantTotal;window.adminOrders=adminOrders;window.checkout=checkout;window.sendOrder=sendOrder;window.filterCat=filterCat;window.login=login;window.logout=logout;window.shop=shop;
+window.addEventListener('hashchange',render);window.quickOrder=quickOrder;window.quickVariantStock=quickVariantStock;window.submitQuickOrder=submitQuickOrder;window.openCart=openCart;window.closePanel=closePanel;window.add=add;window.addFromDetails=addFromDetails;window.selectProductImage=selectProductImage;window.setDetailColorImage=setDetailColorImage;window.removeCart=removeCart;window.orderDetails=orderDetails;window.updateOrderStatus=updateOrderStatus;window.saveCategory=saveCategory;window.previewLogo=previewLogo;window.saveSiteVideos=saveSiteVideos;window.removeSiteVideo=removeSiteVideo;window.clearSiteVideos=clearSiteVideos;window.editCategory=editCategory;window.toggleCategory=toggleCategory;window.deleteCategory=deleteCategory;window.adminCategories=adminCategories;window.refreshVariantEditor=refreshVariantEditor;window.updateVariantTotal=updateVariantTotal;window.adminOrders=adminOrders;window.checkout=checkout;window.sendOrder=sendOrder;window.filterCat=filterCat;window.login=login;window.logout=logout;window.shop=shop;
 save();render();load().catch(e=>{console.error('Moustapha Shop initialization failed:',e);const box=document.querySelector('#shopLoadNotice');if(box)box.innerHTML='<div class="msg danger"><b>Erreur de chargement de la boutique</b><p>'+esc(e?.message||String(e))+'</p><button class="btn" onclick="load()">Réessayer</button></div>';else app.innerHTML='<section class="section wrap"><div class="msg danger">Erreur de chargement : '+esc(e?.message||String(e))+'</div></section>';});
 </script></body></html>
