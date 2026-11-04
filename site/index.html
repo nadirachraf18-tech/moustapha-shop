@@ -258,6 +258,21 @@ header{background:#fffdfd;border-bottom:1px solid #f4e8ee;box-shadow:0 4px 18px 
  .categories .catgrid:empty:after{content:'Les catégories arrivent bientôt';display:block;color:#8b6677;padding:15px}
 }
 
+
+/* Final typography and contrast correction */
+.top{background:#f8dce7!important;color:#24171d!important;border-bottom:1px solid #efc6d6!important}
+.topbar,.topbar a,.topitem{color:#24171d!important}
+header{background:rgba(255,255,255,.98)!important;border-bottom:1px solid #f0e4e9!important}
+.actions,.action,.action span,.action b{color:#24171d!important}
+.nav{background:#21191f!important;color:#fff!important}
+.navin a,.navin a:link,.navin a:visited{color:#fff!important}
+.navin a.active,.navin a:hover{background:#ed2870!important;color:#fff!important}
+.hero{background-color:#f9e8ef!important;color:#321522!important}
+.hero .script{display:block!important;font-family:Arial,Helvetica,sans-serif!important;font-size:clamp(14px,1.4vw,18px)!important;font-style:normal!important;font-weight:800!important;line-height:1.35!important;letter-spacing:3px!important;text-transform:uppercase!important;color:#ed2870!important;margin:0 0 18px!important}
+.hero h1{font-family:Georgia,'Times New Roman',serif!important;font-size:clamp(38px,4.5vw,62px)!important;font-weight:600!important;line-height:1.12!important;letter-spacing:-.8px!important;color:#351323!important;max-width:560px!important;overflow-wrap:anywhere}
+.hero .heroText>p:not(.script){font-family:Arial,Helvetica,sans-serif!important;font-size:clamp(16px,1.5vw,19px)!important;font-weight:400!important;line-height:1.65!important;color:#59434d!important}
+.heroBtn{font-family:Arial,Helvetica,sans-serif!important;font-size:16px!important;font-weight:800!important}
+@media(max-width:600px){.actions,.action,.action span,.action b{color:#24171d!important}.hero .script{font-size:13px!important;letter-spacing:2px!important}.hero h1{font-size:36px!important;line-height:1.15!important}}
 </style></head><body>
 <div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">♧</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">↻</span> Échange & retour facile</div><div class="topitem"><span class="pink">♡</span> Paiement à la livraison</div></div><div>Suivez-nous : Instagram · TikTok · Facebook</div></div></div>
 <header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
