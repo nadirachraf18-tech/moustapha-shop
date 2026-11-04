@@ -404,7 +404,7 @@ try{
 const {data,error}=await sb.rpc('create_order',{p_name:name,p_phone:phone,p_city:city,p_address:address,p_notes:note||null,p_items:[{product_id:id,quantity:qty,size,color}]});
 if(error)throw error;
 const orderNumber=data.order_number,photo=(p.color_images||{})[color]||p.images?.[0]||'';
-const waText='Bonjour Moustapha Shop 👋\\n\\nNouvelle commande #'+orderNumber+'\\n\\n• '+p.name+' × '+qty+(size?' | Taille: '+size:'')+(color?' | Couleur: '+color:'')+(photo?'\\n📸 Photo: '+photo:'')+'\\n\\nNom: '+name+'\\nTéléphone: '+phone+'\\nVille: '+city+'\\nAdresse: '+address+(note?'\\nNote: '+note:'')+'\\n\\nTotal: '+money(data.total);
+const waText='Bonjour Moustapha Shop\n\nCommande #'+orderNumber+'\n\nProduit: '+p.name+'\nQuantite: '+qty+(size?'\nTaille: '+size:'')+(color?'\nCouleur: '+color:'')+(photo?'\n\nPhoto du produit:\n'+photo:'')+'\n\nNom: '+name+'\nTelephone: '+phone+'\nVille: '+city+'\nAdresse: '+address+(note?'\nNote: '+note:'')+'\n\nTotal: '+money(data.total);
 modal.innerHTML='<div class="msg success"><h2>Commande enregistrée ✓</h2><p>Votre commande <b>'+esc(orderNumber)+'</b> a été enregistrée.</p><p>Total: <b>'+money(data.total)+'</b></p><p>Ouverture de WhatsApp pour confirmer…</p></div>';
 setTimeout(()=>{window.location.href='https://wa.me/212664624776?text='+encodeURIComponent(waText)},400);
 }catch(e){if(btn){btn.disabled=false;btn.textContent='Confirmer ma commande'}alert(e.message||'Impossible d’enregistrer la commande.')}
