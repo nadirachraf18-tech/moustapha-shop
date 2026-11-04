@@ -266,7 +266,7 @@ header{background:#fffdfd;border-bottom:1px solid #f4e8ee;box-shadow:0 4px 18px 
 <div class="panel" id="panel"><div class="modal" id="modal"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-const SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co',SB_KEY='sb_publishable_MwnjEVSMNEoYD94tKJhEDA_9795yqbC';
+const SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3amJmanZnaXF1ZmxoYmxlZHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDk4NjEsImV4cCI6MjEwNTY4NTg2MX0.1rnHuutHVHRTSMfNTkcLuUhj-jUgicxgL2c9vf8oTU8';
 const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const app=document.querySelector('#app'),panel=document.querySelector('#panel'),modal=document.querySelector('#modal'); let products=[],cats=[],settings={},cart=JSON.parse(localStorage.ms_cart||'[]');
 const setting=(k,f='')=>settings[k]??f;
