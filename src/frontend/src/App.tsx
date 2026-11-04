@@ -5,6 +5,8 @@ import { CartPage } from "@/pages/CartPage";
 import { CatalogPage } from "@/pages/CatalogPage";
 import { HomePage } from "@/pages/HomePage";
 import { ProductDetailPage } from "@/pages/ProductDetailPage";
+import { useEffect } from "react";
+import { trackMetaEvent } from "@/lib/meta-pixel";
 import {
   Outlet,
   RouterProvider,
@@ -13,12 +15,22 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 
-const rootRoute = createRootRoute({
-  component: () => (
+function RootLayout() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  useEffect(() => {
+    trackMetaEvent("PageView");
+  }, [pathname]);
+
+  return (
     <Layout>
       <Outlet />
     </Layout>
-  ),
+  );
+}
+
+const rootRoute = createRootRoute({
+  component: RootLayout,
 });
 
 const homeRoute = createRoute({
