@@ -341,6 +341,18 @@ if(price){const [lo,hi]=price.split('-').map(Number);list=list.filter(p=>Number(
 if(sort==='priceAsc')list.sort((a,b)=>Number(a.price)-Number(b.price));if(sort==='priceDesc')list.sort((a,b)=>Number(b.price)-Number(a.price));if(sort==='name')list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));if(sort==='new')list.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
 const g=document.querySelector('#grid');if(g)g.innerHTML=cards(list);
 }
+function getWishlist(){try{return JSON.parse(localStorage.getItem('ms_wishlist')||'[]')}catch(e){return []}}
+function toggleWishlist(id){
+ let w=getWishlist();w=w.includes(id)?w.filter(x=>x!==id):[...w,id];
+ try{localStorage.setItem('ms_wishlist',JSON.stringify(w))}catch(e){}
+ const b=document.querySelector('[data-wish="'+id+'"]');
+ if(b){b.classList.toggle('active',w.includes(id));b.textContent=w.includes(id)?'♥':'♡'}
+}
+function rememberViewed(id){
+ let a=[];try{a=JSON.parse(localStorage.getItem('ms_recent')||'[]')}catch(e){}
+ a=[id,...a.filter(x=>x!==id)].slice(0,10);
+ try{localStorage.setItem('ms_recent',JSON.stringify(a))}catch(e){}
+}
 function cards(list){if(!list.length)return '<div class="msg">Aucun produit disponible pour le moment.</div>';const w=getWishlist();return list.map(p=>'<article class="card"><div class="pic" onclick="productDetails(\''+p.id+'\')" style="cursor:pointer">'+(p.images?.[0]?'<img src="'+esc(p.images[0])+'" alt="'+esc(p.name)+'">':'<span>Moustapha Shop</span>')+'<button class="wishBtn '+(w.includes(p.id)?'active':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWishlist(\''+p.id+'\')">'+(w.includes(p.id)?'♥':'♡')+'</button></div><div class="body"><h3>'+esc(p.name)+'</h3><div><span class="price">'+money(p.price)+'</span>'+(p.old_price?'<span class="old">'+money(p.old_price)+'</span>':'')+'</div><div class="productActions"><button class="btn dark" style="margin-top:12px" onclick="productDetails(\''+p.id+'\')">Aperçu rapide</button></div></div></article>').join('')}
 function selectProductImage(url){
 const main=document.querySelector('#productMainImage');
