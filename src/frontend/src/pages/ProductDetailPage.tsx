@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { trackMetaEvent } from "@/lib/meta-pixel";
 
 const MAX_QUANTITY = 99;
 
@@ -104,6 +105,17 @@ export function ProductDetailPage() {
   const [justAdded, setJustAdded] = useState(false);
 
   useEffect(() => {
+    if (!product) return;
+    trackMetaEvent("ViewContent", {
+      content_ids: [product.id.toString()],
+      content_name: product.name,
+      content_type: "product",
+      value: Number(product.price),
+      currency: "MAD",
+    });
+  }, [product]);
+
+  useEffect(() => {
     // Reset the picker whenever the route moves to another product.
     void params.id;
     setQuantity(1);
@@ -139,6 +151,14 @@ export function ProductDetailPage() {
       },
       quantity,
     );
+    trackMetaEvent("AddToCart", {
+      content_ids: [product.id.toString()],
+      content_name: product.name,
+      content_type: "product",
+      value: Number(product.price) * quantity,
+      currency: "MAD",
+      num_items: quantity,
+    });
     setJustAdded(true);
     toast.success("تزاد للسلة", {
       description: `${product.name} — ${formatCount(quantity)} × ${formatPrice(product.price)}`,
