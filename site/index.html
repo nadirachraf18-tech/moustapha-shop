@@ -592,15 +592,52 @@ header{background:#050405!important;border-bottom:1px solid #5c1836!important}
  .heroPhotoGrid img:last-child{transform:translateY(-9px)}
 }
 
-\n/* Hero sans les deux photos : contenu recentré */\n.hero .wrap{justify-content:center!important}\n.heroText{flex:0 1 820px!important;width:100%!important;max-width:820px!important;padding:64px 24px!important;margin:0 auto!important;text-align:center!important}\n.heroPerks{justify-content:center!important}\n.heroMedia,.heroPhotoGrid{display:none!important}\n@media(max-width:650px){.heroText{max-width:100%!important;padding:38px 4px!important}.hero .wrap{display:flex!important;justify-content:center!important}}\n</style></head><body>
+\n/* Hero sans les deux photos : contenu recentré */\n.hero .wrap{justify-content:center!important}\n.heroText{flex:0 1 820px!important;width:100%!important;max-width:820px!important;padding:64px 24px!important;margin:0 auto!important;text-align:center!important}\n.heroPerks{justify-content:center!important}\n.heroMedia,.heroPhotoGrid{display:none!important}\n@media(max-width:650px){.heroText{max-width:100%!important;padding:38px 4px!important}.hero .wrap{display:flex!important;justify-content:center!important}}\n
+/* Light / dark appearance switch */
+.themeToggle{border:1px solid #806273;background:#241821;color:#fff;border-radius:999px;padding:10px 13px;font-size:13px;font-weight:800;white-space:nowrap;cursor:pointer}
+.themeToggle:hover{background:#ed2870;border-color:#ed2870}
+body.dark-mode{background:#141116!important;color:#f5edf2!important}
+body.dark-mode .top,body.dark-mode header,body.dark-mode .nav{background:#0b090d!important;color:#f8edf3!important;border-color:#342832!important}
+body.dark-mode .navin a{color:#f8edf3}
+body.dark-mode .navin a.active{background:#ed2870;color:#fff}
+body.dark-mode .categories,body.dark-mode .section,body.dark-mode main{background:#141116!important;color:#f5edf2!important}
+body.dark-mode .sectionTitle h1,body.dark-mode .sectionTitle h2,body.dark-mode .cat b,body.dark-mode .body h3{color:#f8edf3!important}
+body.dark-mode .sectionTitle p,body.dark-mode .muted{color:#b9aab4!important}
+body.dark-mode .card,body.dark-mode .stat,body.dark-mode .adminPanel,body.dark-mode .adminMetric,body.dark-mode .modal,body.dark-mode .msg,body.dark-mode .item{background:#211b24!important;color:#f7edf3!important;border-color:#403440!important}
+body.dark-mode .pic,body.dark-mode .catpic{background:#2b222c!important}
+body.dark-mode .input,body.dark-mode textarea,body.dark-mode select,body.dark-mode .search input{background:#211b24!important;color:#fff!important;border-color:#51414e!important}
+body.dark-mode .search{background:#211b24!important;border-color:#51414e!important}
+body.dark-mode .adminStudio{background:#141116!important;color:#f5edf2!important}
+body.dark-mode .adminMain{color:#f5edf2!important}
+body.dark-mode .adminWelcome p,body.dark-mode .adminMetric small,body.dark-mode .adminPanelHead h2,body.dark-mode .adminRecentRow{color:#e2d5dd!important}
+body.dark-mode .adminPanelHead,body.dark-mode .adminRecentRow,body.dark-mode .adminMiniRow{border-color:#403440!important}
+body.dark-mode .adminSearch{background:#211b24!important;color:#eee!important;border-color:#51414e!important}
+body.dark-mode .hero{color:#fff!important}
+body.dark-mode .heroText,body.dark-mode .hero h1,body.dark-mode .hero p{color:#fff!important}
+body.dark-mode .themeToggle{background:#fff1a8;color:#382b16;border-color:#e5c66b}
+@media(max-width:600px){.themeToggle{padding:8px 9px;font-size:17px}.themeToggle span{display:none}.actions{gap:7px}}
+</style></head><body>
 <div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">♧</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">↻</span> Échange & retour facile</div><div class="topitem"><span class="pink">♡</span> Paiement à la livraison</div></div><div>Suivez-nous : Instagram · TikTok · Facebook</div></div></div>
-<header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
+<header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="themeToggle" id="themeToggle" type="button" onclick="toggleSiteTheme()" aria-label="Changer le thème">🌙 <span>Mode nuit</span></button><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
 <div class="nav"><div class="wrap navin"><a href="#/" class="active">Accueil</a><a href="#shop">Nouveautés</a><a href="#shop">Promotions</a><a href="#contact">À propos</a><a href="#contact">Contact</a></div></div>
 <main id="app"></main>
 <div class="panel" id="panel"><div class="modal" id="modal"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-const SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3amJmanZnaXF1ZmxoYmxlZHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDk4NjEsImV4cCI6MjEwNTY4NTg2MX0.1rnHuutHVHRTSMfNTkcLuUhj-jUgicxgL2c9vf8oTU8';
+
+function setSiteTheme(mode){
+ const dark=mode==='dark';
+ document.body.classList.toggle('dark-mode',dark);
+ const b=document.querySelector('#themeToggle');
+ if(b){b.innerHTML=dark?'☀️ <span>Mode jour</span>':'🌙 <span>Mode nuit</span>';b.setAttribute('aria-label',dark?'Activer le mode jour':'Activer le mode nuit');}
+}
+function toggleSiteTheme(){
+ const next=document.body.classList.contains('dark-mode')?'light':'dark';
+ localStorage.setItem('ms_theme',next);setSiteTheme(next);
+}
+window.toggleSiteTheme=toggleSiteTheme;
+setSiteTheme(localStorage.getItem('ms_theme')||'light');
+\nconst SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3amJmanZnaXF1ZmxoYmxlZHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDk4NjEsImV4cCI6MjEwNTY4NTg2MX0.1rnHuutHVHRTSMfNTkcLuUhj-jUgicxgL2c9vf8oTU8';
 const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const app=document.querySelector('#app'),panel=document.querySelector('#panel'),modal=document.querySelector('#modal'); let products=[],cats=[],settings={},cart=JSON.parse(localStorage.ms_cart||'[]');
 const setting=(k,f='')=>settings[k]??f;
