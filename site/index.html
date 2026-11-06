@@ -637,7 +637,8 @@ function toggleSiteTheme(){
 }
 window.toggleSiteTheme=toggleSiteTheme;
 setSiteTheme(localStorage.getItem('ms_theme')||'light');
-\nconst SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3amJmanZnaXF1ZmxoYmxlZHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDk4NjEsImV4cCI6MjEwNTY4NTg2MX0.1rnHuutHVHRTSMfNTkcLuUhj-jUgicxgL2c9vf8oTU8';
+
+const SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3amJmanZnaXF1ZmxoYmxlZHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDk4NjEsImV4cCI6MjEwNTY4NTg2MX0.1rnHuutHVHRTSMfNTkcLuUhj-jUgicxgL2c9vf8oTU8';
 const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const app=document.querySelector('#app'),panel=document.querySelector('#panel'),modal=document.querySelector('#modal'); let products=[],cats=[],settings={},cart=JSON.parse(localStorage.ms_cart||'[]');
 const setting=(k,f='')=>settings[k]??f;
