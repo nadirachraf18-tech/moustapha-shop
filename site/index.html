@@ -394,6 +394,92 @@ header{background:#050405!important;border-bottom:1px solid #5c1836!important}
 @media(max-width:900px){.hero{min-height:580px!important}.heroText{flex-basis:43%;padding:26px 12px 26px 0!important}.heroBrand{font-size:34px}.hero h1{font-size:34px!important}.heroPerks{gap:5px;font-size:11px}.heroMedia{flex-basis:57%;width:57%!important}}
 @media(max-width:600px){.hero{min-height:0!important}.hero:after{right:-10%;top:25%;width:100%;height:65%;border-width:2px}.hero .wrap{min-height:0!important;display:flex;flex-direction:column;align-items:stretch;gap:0;padding-top:25px;padding-bottom:0}.heroText{flex:auto;max-width:none!important;padding:10px 0 25px!important}.heroBrand{font-size:34px}.heroBrandSub{font-size:18px;margin:5px 0 18px}.hero h1{font-size:32px!important}.heroPerks{font-size:10px;margin:17px 0 22px}.heroPerks span{max-width:31%}.heroBtn{padding:14px 22px!important}.heroMedia{flex:none;width:100%!important;height:auto!important;aspect-ratio:1.22/1;align-self:auto}.heroMedia:before{background:linear-gradient(180deg,#16090f22,transparent 25%)}}
 
+
+/* Final hero correction: balanced typography, no text/photo collision, mixed styling */
+.hero{
+ min-height:600px!important;
+ height:clamp(600px,calc(100svh - 165px),760px)!important;
+ background:radial-gradient(ellipse at 18% 50%,#68152f 0%,#260b18 44%,#09070a 100%)!important;
+ color:#fff!important;
+ position:relative;isolation:isolate;overflow:hidden
+}
+.hero:before{
+ content:"";position:absolute;z-index:-1;left:2.5%;top:-17%;width:43%;height:134%;
+ border:3px solid #f6bd72;border-radius:50%;
+ box-shadow:0 0 16px #f6bd7270,0 0 40px #ed287044;
+ pointer-events:none
+}
+.hero:after{
+ content:"";position:absolute;z-index:-1;left:0;top:0;width:52%;height:100%;
+ background:linear-gradient(90deg,#3d0b21aa 0%,#3d0b2160 70%,transparent 100%);
+ pointer-events:none
+}
+.hero .wrap{
+ width:100%;max-width:1500px;min-height:100%!important;height:100%;
+ display:grid!important;grid-template-columns:minmax(390px,43%) minmax(0,57%);
+ align-items:stretch;gap:0;padding:0 28px;position:relative;z-index:1
+}
+.heroText{
+ width:100%;max-width:600px!important;min-width:0;align-self:center;
+ padding:52px 38px 52px 12px!important;text-align:left!important;color:#fff!important;z-index:3
+}
+.heroBrand{font-size:clamp(34px,3.1vw,52px)!important;line-height:1.12;letter-spacing:.4px;color:#ffe0e9!important;text-shadow:0 2px 18px #ed287055}
+.heroBrandSub{font-size:21px!important;letter-spacing:7px;margin:10px 0 25px!important;color:#f8c47c!important}
+.hero .script{
+ display:inline-block;font-size:12px!important;letter-spacing:3px!important;
+ border:1px solid #ef8cae!important;border-radius:999px;padding:10px 17px!important;
+ color:#ffe4ed!important;background:#ed28702a;margin:0 0 17px!important
+}
+.hero h1{
+ max-width:560px;font-size:clamp(36px,3.5vw,55px)!important;line-height:1.08!important;
+ font-style:normal!important;font-weight:500!important;letter-spacing:-.8px;
+ margin:0 0 22px!important;color:#fff!important;text-shadow:none!important
+}
+.heroPerks{justify-content:flex-start!important;gap:0!important;margin:25px 0 28px!important;font-size:12px!important;line-height:1.35}
+.heroPerks span{width:33.333%;max-width:none!important;padding:0 12px!important;text-align:center}
+.heroPerks span:first-child{padding-left:0!important}
+.heroPerks span:before{width:27px!important;height:27px!important;border:1.5px solid #f6bd72!important;box-shadow:none!important;border-radius:50%!important}
+.heroPerks span+span{border-left:1px solid #b88b78!important}
+.heroBtn{padding:15px 23px!important;border:1px solid #ffc0d4!important;box-shadow:0 8px 24px #ed287044!important}
+.heroMedia.heroPhotoGrid{
+ display:grid!important;grid-template-columns:1fr 1fr;gap:12px;
+ position:relative!important;inset:auto!important;transform:none!important;
+ width:100%!important;height:100%!important;min-width:0;flex:none!important;
+ align-self:stretch;border:0!important;border-radius:0!important;overflow:hidden;
+ background:transparent!important;box-shadow:none!important;z-index:2;padding:26px 0 26px 8px
+}
+.heroPhotoGrid img{
+ width:100%;height:100%;min-width:0;min-height:0;display:block;object-fit:cover;
+ object-position:center 30%;border-radius:18px;border:1px solid #ffffff35;
+ box-shadow:0 16px 42px #0005;filter:saturate(1.03) contrast(1.02)
+}
+.heroPhotoGrid img:first-child{object-position:center 30%}
+.heroPhotoGrid img:last-child{object-position:center 35%}
+.heroPhotoGrid:before{display:none!important}
+@media(max-width:1050px){
+ .hero{height:auto!important;min-height:570px!important}
+ .hero .wrap{grid-template-columns:minmax(320px,44%) minmax(0,56%);padding:0 20px}
+ .heroText{padding:40px 22px 40px 4px!important}
+ .heroBrand{font-size:34px!important}.hero h1{font-size:38px!important}
+ .heroPerks{font-size:10px!important}
+ .heroMedia.heroPhotoGrid{padding:22px 0 22px 6px}
+}
+@media(max-width:650px){
+ .hero{height:auto!important;min-height:0!important}
+ .hero:before{left:-18%;top:2%;width:105%;height:58%;border-width:2px}
+ .hero:after{width:100%;height:58%;background:linear-gradient(180deg,#3d0b2170,transparent)!important}
+ .hero .wrap{display:flex!important;flex-direction:column;align-items:stretch;gap:0;padding:0 17px}
+ .heroText{max-width:none!important;padding:36px 4px 26px!important;text-align:center!important}
+ .heroBrand{font-size:35px!important}.heroBrandSub{font-size:18px!important;margin:7px 0 18px!important}
+ .hero .script{font-size:10px!important;letter-spacing:2.2px!important;margin-bottom:13px!important}
+ .hero h1{font-size:35px!important;margin-bottom:16px!important}
+ .heroPerks{margin:20px 0 22px!important;font-size:10px!important}
+ .heroPerks span{padding:0 6px!important}
+ .heroBtn{font-size:13px;padding:13px 18px!important}
+ .heroMedia.heroPhotoGrid{width:100%!important;height:auto!important;aspect-ratio:1.25/1;padding:0 0 18px!important;gap:8px}
+ .heroPhotoGrid img{border-radius:12px;object-position:center 28%}
+}
+
 </style></head><body>
 <div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">♧</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">↻</span> Échange & retour facile</div><div class="topitem"><span class="pink">♡</span> Paiement à la livraison</div></div><div>Suivez-nous : Instagram · TikTok · Facebook</div></div></div>
 <header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
@@ -459,7 +545,7 @@ const catHtml=cats.slice(0,8).map((cat,i)=>{
 }).join('');
 const heroVideos=(()=>{try{return JSON.parse(setting('hero_videos','[]'))||[]}catch(e){return []}})();
 const heroImage='https://images.pexels.com/photos/31776042/pexels-photo-31776042.jpeg?auto=compress&cs=tinysrgb&w=1400';
-const heroMedia=heroImage?'<div class="heroMedia"><img src="'+esc(heroImage)+'" alt="Nouvelle collection Moustapha Shop" style="width:100%;height:100%;object-fit:cover"></div>':(heroVideos.length?'<div class="heroMedia"><div class="heroVideoBadge">🎬 Nouvelle collection</div><video id="heroProductVideo" autoplay muted playsinline loop preload="metadata" src="'+esc(heroVideos[0])+'"></video><div class="heroVideoDots">'+heroVideos.map((u,i)=>'<button type="button" class="heroDot '+(i===0?'active':'')+'" data-video-index="'+i+'" aria-label="Vidéo '+(i+1)+'"></button>').join('')+'</div></div>':'');
+const heroMedia='<div class="heroMedia heroPhotoGrid"><img src="https://images.pexels.com/photos/31776042/pexels-photo-31776042.jpeg?auto=compress&cs=tinysrgb&w=1100" alt="Modèles en hijab – Moustapha Shop"><img src="https://images.pexels.com/photos/7203904/pexels-photo-7203904.jpeg?auto=compress&cs=tinysrgb&w=1100" alt="Modèles sans hijab – Moustapha Shop"></div>';
 const latest=featuredFirst(products).slice(0,8);
 app.innerHTML='<div class="wrap" id="shopLoadNotice"></div><section class="hero"><div class="wrap"><div class="heroText"><div class="heroBrand">MOUSTAPHA SHOP</div><div class="heroBrandSub">✦ SHOP ✦</div><p class="script">NOUVELLE COLLECTION</p><h1>Votre Style, Notre Passion ♡</h1><div class="heroPerks"><span>Livraison partout au Maroc</span><span>Échange & retour facile</span><span>Paiement à la livraison</span></div><a class="heroBtn" href="#shop">Découvrir la collection <b>→</b></a></div>'+heroMedia+'</div></section><section class="categories"><div class="wrap"><div class="sectionTitle"><h2>Nos Catégories</h2><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div class="catgrid">'+catHtml+'</div></div></section><section class="section wrap"><div class="sectionTitle"><div><h2>Nouveautés <span style="display:inline-block;background:#d92779;color:#fff;border-radius:20px;padding:4px 9px;font-size:12px;vertical-align:middle">New</span></h2></div><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div id="homegrid" class="grid">'+cards(latest)+'</div></section>';
 if(heroVideos.length)bindHeroVideos(heroVideos);
