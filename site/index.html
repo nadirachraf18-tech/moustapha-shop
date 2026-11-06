@@ -480,6 +480,118 @@ header{background:#050405!important;border-bottom:1px solid #5c1836!important}
  .heroPhotoGrid img{border-radius:12px;object-position:center 28%}
 }
 
+
+/* Moustapha Shop — refined editorial hero */
+.hero{
+ height:auto!important;min-height:620px!important;
+ background:
+ radial-gradient(ellipse at 82% 48%,#8e234a55 0%,transparent 42%),
+ linear-gradient(115deg,#10070d 0%,#260b19 52%,#10070d 100%)!important;
+ position:relative;isolation:isolate;overflow:hidden;color:#fff
+}
+.hero:before{
+ content:"";position:absolute;z-index:-1;inset:18px;
+ border:1px solid #d9a85c66;border-radius:28px;pointer-events:none
+}
+.hero:after{
+ content:"";position:absolute;z-index:-1;width:520px;height:520px;left:-240px;bottom:-360px;
+ border:1px solid #ed287055;border-radius:50%;box-shadow:0 0 0 28px #ed287012,0 0 0 58px #ed28700a
+}
+.hero .wrap{
+ width:100%;max-width:1540px;min-height:620px!important;height:auto!important;
+ display:grid!important;grid-template-columns:minmax(360px,.82fr) minmax(0,1.18fr);
+ align-items:center;gap:clamp(25px,4vw,68px);padding:46px clamp(28px,5vw,76px)!important;
+ position:relative;z-index:1
+}
+.heroText{
+ width:100%;max-width:590px!important;min-width:0;align-self:center;
+ padding:30px 0!important;text-align:left!important;color:#fff!important
+}
+.heroBrand{
+ font-family:Georgia,serif!important;font-size:clamp(35px,3.4vw,57px)!important;
+ font-weight:600!important;letter-spacing:1px;line-height:1.08;color:#ffe4ed!important;
+ text-shadow:0 5px 28px #ed287044
+}
+.heroBrandSub{
+ font-family:Georgia,serif!important;font-size:18px!important;letter-spacing:9px!important;
+ color:#f4c477!important;margin:12px 0 34px!important
+}
+.hero .script{
+ display:inline-flex!important;align-items:center;gap:10px;
+ font:800 11px/1 Arial,sans-serif!important;letter-spacing:3.5px!important;
+ color:#ffdce8!important;background:#ed28701c!important;
+ border:1px solid #ed287099!important;border-radius:999px!important;
+ padding:12px 17px!important;margin:0 0 20px!important
+}
+.hero h1{
+ max-width:540px;font-family:Georgia,serif!important;
+ font-size:clamp(39px,4vw,61px)!important;font-style:normal!important;
+ font-weight:500!important;line-height:1.05!important;letter-spacing:-1.3px;
+ color:#fff!important;margin:0 0 26px!important;text-shadow:none!important
+}
+.heroPerks{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:0!important;margin:28px 0 32px!important;color:#fff;font-size:12px!important;font-weight:700
+}
+.heroPerks span{
+ display:flex!important;flex-direction:column;align-items:flex-start;gap:10px;
+ padding:0 13px!important;line-height:1.35;text-align:left
+}
+.heroPerks span:first-child{padding-left:0!important}
+.heroPerks span+span{border-left:1px solid #d9a85c66}
+.heroPerks span:before{
+ content:"";display:block;width:30px!important;height:30px!important;flex:0 0 30px;
+ border:1px solid #f3bd76!important;border-radius:50%!important;
+ background:radial-gradient(circle,#ed287044,transparent 70%)!important;
+ box-shadow:0 0 18px #ed287033!important
+}
+.heroBtn{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:15px;
+ padding:16px 27px!important;border:1px solid #ffb1cb!important;
+ border-radius:999px!important;background:linear-gradient(110deg,#f42b79,#bd1457)!important;
+ box-shadow:0 12px 32px #ed287044!important;font-size:15px!important;
+ transition:transform .2s ease,box-shadow .2s ease
+}
+.heroBtn:hover{transform:translateY(-3px);box-shadow:0 16px 38px #ed287066!important}
+.heroMedia.heroPhotoGrid{
+ display:grid!important;grid-template-columns:1fr 1fr;gap:14px;
+ width:100%!important;height:100%!important;min-height:500px;
+ position:relative!important;inset:auto!important;transform:none!important;
+ align-self:stretch;flex:none!important;padding:0!important;overflow:visible!important;
+ border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important
+}
+.heroPhotoGrid img{
+ width:100%;height:100%;min-height:500px;display:block;object-fit:cover;
+ border-radius:22px!important;border:1px solid #f5d4df55!important;
+ box-shadow:0 22px 60px #0008,0 0 24px #ed287022!important;
+ filter:saturate(1.04) contrast(1.02)
+}
+.heroPhotoGrid img:first-child{object-position:center 28%;transform:translateY(17px)}
+.heroPhotoGrid img:last-child{object-position:center 30%;transform:translateY(-17px)}
+@media(max-width:950px){
+ .hero .wrap{grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:22px;padding:36px 24px!important}
+ .heroMedia.heroPhotoGrid{min-height:420px}.heroPhotoGrid img{min-height:420px}
+ .heroBrand{font-size:38px!important}.hero h1{font-size:42px!important}
+ .heroPerks{font-size:10px!important}
+}
+@media(max-width:650px){
+ .hero{min-height:0!important}
+ .hero:before{inset:9px;border-radius:18px}
+ .hero .wrap{display:flex!important;flex-direction:column;align-items:stretch;gap:20px;padding:35px 22px 28px!important;min-height:0!important}
+ .heroText{padding:12px 4px 0!important;text-align:center!important}
+ .heroBrand{font-size:36px!important}.heroBrandSub{font-size:16px!important;letter-spacing:7px!important;margin:9px 0 24px!important}
+ .hero .script{font-size:10px!important;letter-spacing:2.5px!important;margin-bottom:16px!important}
+ .hero h1{font-size:39px!important;margin-bottom:18px!important}
+ .heroPerks{margin:22px 0 25px!important;font-size:10px!important}
+ .heroPerks span{padding:0 8px!important;align-items:center;text-align:center;gap:8px}
+ .heroPerks span:before{width:25px!important;height:25px!important;flex-basis:25px}
+ .heroBtn{font-size:13px!important;padding:14px 22px!important}
+ .heroMedia.heroPhotoGrid{width:100%!important;min-height:0;height:auto!important;aspect-ratio:1.18/1;gap:9px}
+ .heroPhotoGrid img{min-height:0;height:100%;border-radius:14px!important}
+ .heroPhotoGrid img:first-child{transform:translateY(9px)}
+ .heroPhotoGrid img:last-child{transform:translateY(-9px)}
+}
+
 </style></head><body>
 <div class="top"><div class="wrap topbar"><div class="topitems"><div class="topitem"><span class="pink">♧</span> Livraison partout au Maroc</div><div class="topitem"><span class="pink">↻</span> Échange & retour facile</div><div class="topitem"><span class="pink">♡</span> Paiement à la livraison</div></div><div>Suivez-nous : Instagram · TikTok · Facebook</div></div></div>
 <header><div class="wrap bar"><a class="logo" href="#/"><img class="logoimg" src="./logo.svg?v=5" alt="Moustapha Shop" id="siteLogo"></a><div class="search"><input placeholder="Rechercher un produit..." oninput="searchProducts(this.value)"><button>⌕</button></div><div class="actions"><a class="action" href="#admin"><b>♙</b><span>Compte / Admin</span></a><div class="action"><b>♡</b><span>Favoris</span></div><button class="cartbtn" onclick="openCart()">🛒 <span id="count">0</span></button></div></div></header>
