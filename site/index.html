@@ -625,6 +625,8 @@ body.dark-mode .themeToggle{background:#fff1a8;color:#382b16;border-color:#e5c66
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 
+function safeStorageGet(key,fallback=null){try{return window.localStorage.getItem(key)??fallback}catch(e){return fallback}}
+function safeStorageSet(key,value){try{window.localStorage.setItem(key,String(value));return true}catch(e){return false}}
 function setSiteTheme(mode){
  const dark=mode==='dark';
  document.body.classList.toggle('dark-mode',dark);
@@ -633,14 +635,14 @@ function setSiteTheme(mode){
 }
 function toggleSiteTheme(){
  const next=document.body.classList.contains('dark-mode')?'light':'dark';
- localStorage.setItem('ms_theme',next);setSiteTheme(next);
+ safeStorageSet('ms_theme',next);setSiteTheme(next);
 }
 window.toggleSiteTheme=toggleSiteTheme;
-setSiteTheme(localStorage.getItem('ms_theme')||'light');
+setSiteTheme(safeStorageGet('ms_theme','light'));
 
 const SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3amJmanZnaXF1ZmxoYmxlZHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDk4NjEsImV4cCI6MjEwNTY4NTg2MX0.1rnHuutHVHRTSMfNTkcLuUhj-jUgicxgL2c9vf8oTU8';
 const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-const app=document.querySelector('#app'),panel=document.querySelector('#panel'),modal=document.querySelector('#modal'); let products=[],cats=[],settings={},cart=JSON.parse(localStorage.ms_cart||'[]');
+const app=document.querySelector('#app'),panel=document.querySelector('#panel'),modal=document.querySelector('#modal'); let products=[],cats=[],settings={},cart=(()=>{try{return JSON.parse(safeStorageGet('ms_cart','[]'))}catch(e){return []}})();
 const setting=(k,f='')=>settings[k]??f;
 function applyTheme(){let old=document.querySelector('#dynamicTheme');if(old)old.remove();const pink=setting('primary_color','#ed2870'),gold=setting('accent_color','#d4af37');const st=document.createElement('style');st.id='dynamicTheme';st.textContent=`.navin a:hover,.navin a.active,.heroBtn,.btn:not(.dark),.search button,.cartbtn{background:${pink}!important}.price{color:${pink}!important}.pink,.service i{color:${pink}!important}.chip{background:${pink}12!important;border-color:${pink}55!important;color:${pink}!important}.hero:after{background:radial-gradient(circle at 50% 40%,${pink}aa,transparent 48%),linear-gradient(120deg,transparent,${gold}55)!important}.logoimg{filter:drop-shadow(0 0 10px ${pink}22)}`;document.head.appendChild(st);}
 function siteText(){document.title=setting('shop_name','Moustapha Shop')+' – Boutique en ligne';const top=document.querySelector('.topbar>div:last-child');if(top)top.innerHTML=(setting('instagram_url')?'Instagram':'')+' · '+(setting('tiktok_url')?'TikTok':'')+' · '+(setting('facebook_url')?'Facebook':'')+' · ☎ '+esc(setting('phone','+212 664-624776'));const logo=document.querySelector('#siteLogo');if(logo){logo.src='./logo.svg?v=4';logo.removeAttribute('srcset');}}
@@ -825,7 +827,7 @@ function setDetailColorImage(id,color){const p=products.find(x=>x.id===id);if(!p
 function filterCat(id){const list=products.filter(p=>p.category_id===id);const g=document.querySelector('#grid,#homegrid');if(g)g.innerHTML=cards(list)}
 function searchProducts(q){q=q.toLowerCase();const list=products.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.description||'').toLowerCase().includes(q));const g=document.querySelector('#grid,#homegrid');if(g)g.innerHTML=cards(list)}
 function add(id,size=null,color=null){const p=products.find(x=>x.id===id);if(!p)return;if((p.sizes||[]).length&&!size)return alert('Veuillez choisir la taille.');if((p.colors||[]).length&&!color)return alert('Veuillez choisir la couleur.');const key=id+'|'+(size||'')+'|'+(color||''),variantKey=(color||'')+'|'+(size||''),has=p.variant_stock&&Object.keys(p.variant_stock).length,available=has?Number(p.variant_stock[variantKey]||0):Number(p.stock||0),x=cart.find(x=>x.key===key);if((x?.qty||0)>=available)return alert(available<=0?'Cette variante est épuisée.':'Stock insuffisant');if(x)x.qty++;else cart.push({key,id,qty:1,size:size||null,color:color||null});save();alert('Produit ajouté au panier.')}
-function save(){localStorage.ms_cart=JSON.stringify(cart);const el=document.querySelector('#count');if(el)el.textContent=cart.reduce((a,x)=>a+x.qty,0)}
+function save(){safeStorageSet('ms_cart',JSON.stringify(cart));const el=document.querySelector('#count');if(el)el.textContent=cart.reduce((a,x)=>a+x.qty,0)}
 function openCart(){let rows=cart.map(x=>{const p=products.find(p=>p.id===x.id);return p?'<div class="item"><div style="flex:1"><b>'+esc(p.name)+'</b><div class="muted">'+money(p.price)+' × '+x.qty+'</div></div><button class="btn dark" onclick="removeCart(\''+x.id+'\')">×</button></div>':''}).join('');let total=cart.reduce((s,x)=>s+(products.find(p=>p.id===x.id)?.price||0)*x.qty,0);modal.innerHTML='<h2>Votre panier</h2><div class="items">'+(rows||'<p class="muted">Panier vide.</p>')+'</div><hr><h3>Total produits: '+money(total)+'</h3>'+(cart.length?'<button class="btn" onclick="checkout()">Commander</button>':'')+' <button class="btn dark" onclick="closePanel()">Fermer</button>';panel.classList.add('open')}
 function removeCart(id){cart=cart.filter(x=>x.id!==id);save();openCart()}
 function checkout(){
