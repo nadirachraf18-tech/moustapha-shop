@@ -788,42 +788,73 @@ function productOutOfStock(p){return variantStockValue(p)<=0}
 function colorOutOfStock(p,color){const map=p?.variant_stock&&typeof p.variant_stock==='object'?p.variant_stock:{};if(!Object.keys(map).length)return Number(p?.stock||0)<=0;const keys=Object.keys(map).filter(k=>k.split('|')[0]===color);return !keys.length||keys.reduce((sum,k)=>sum+Math.max(0,Number(map[k]||0)),0)<=0}
 function featuredFirst(list){return [...list].sort((a,b)=>Number(!!b.is_featured)-Number(!!a.is_featured))}
 function cards(list){if(!list.length)return '<div class="msg">Aucun produit disponible pour le moment.</div>';const w=getWishlist();return featuredFirst(list).map(p=>{const out=productOutOfStock(p);return '<article class="card"><div class="pic" onclick="productDetails(&quot;'+p.id+'&quot;)" style="cursor:pointer;position:relative">'+(p.images?.[0]?'<img src="'+esc(p.images[0])+'" alt="'+esc(p.name)+'">':'<span>Moustapha Shop</span>')+(out?'<span class="outStockBadge">OUT OF STOCK · ÉPUISÉ</span>':'')+'<button class="wishBtn '+(w.includes(p.id)?'active':'')+'" data-wish="'+p.id+'" onclick="event.stopPropagation();toggleWishlist(&quot;'+p.id+'&quot;)">'+(w.includes(p.id)?'♥':'♡')+'</button></div><div class="body"><h3>'+esc(p.name)+'</h3><div><span class="price">'+money(p.price)+'</span>'+(p.old_price?'<span class="old">'+money(p.old_price)+'</span>':'')+'</div><div class="productActions" style="display:grid;grid-template-columns:1fr;gap:8px"><button class="btn" style="margin-top:12px;width:100%" onclick="quickOrder(&quot;'+p.id+'&quot;)" '+(out?'disabled':'')+'>'+(out?'Épuisé':'Commander')+'</button><button class="btn dark" style="width:100%" onclick="productDetails(&quot;'+p.id+'&quot;)">Aperçu rapide</button></div></div></article>'}).join('')}
+
 function quickOrder(id){
 const p=products.find(x=>x.id===id);if(!p)return;
-const sizes=p.sizes||[],colors=p.colors||[];
-const sizeField=sizes.length?'<label><b>Taille *</b><select class="input" id="quick_size" required onchange="quickVariantStock(&quot;'+id+'&quot;)"><option value="">Choisir la taille</option>'+sizes.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('')+'</select></label>':'';
-const colorField=colors.length?'<label><b>Couleur *</b><select class="input" id="quick_color" required onchange="quickVariantStock(&quot;'+id+'&quot;)"><option value="">Choisir la couleur</option>'+colors.map(v=>'<option value="'+esc(v)+'" '+(colorOutOfStock(p,v)?'disabled':'')+'>'+esc(v)+(colorOutOfStock(p,v)?' · Épuisé':'')+'</option>').join('')+'</select></label>':'';
 const photo=(p.images||[])[0]||'';
-modal.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Commander ce produit</h2><button class="btn dark" onclick="closePanel()">×</button></div><div class="item" style="margin:12px 0"><img src="'+esc(photo)+'" alt="'+esc(p.name)+'"><div><b>'+esc(p.name)+'</b><div class="price">'+money(p.price)+'</div></div></div><form id="quickOrderForm" onsubmit="submitQuickOrder(event,&quot;'+id+'&quot;)"><div class="row">'+sizeField+colorField+'</div><label>Quantité *<input class="input" id="quick_qty" type="number" min="1" step="1" value="1" required></label><div id="quickStock" class="muted">Stock disponible: '+Number(p.stock||0)+'</div><hr><h3>Informations de livraison</h3><label>Nom complet *<input class="input" id="quick_name" autocomplete="name" required placeholder="Votre nom complet"></label><label>Téléphone *<input class="input" id="quick_phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="06XXXXXXXX"></label><label>Ville *<input class="input" id="quick_city" autocomplete="address-level2" required placeholder="Votre ville"></label><label>Adresse complète *<textarea class="input" id="quick_address" autocomplete="street-address" required rows="2" placeholder="Quartier, rue, numéro…"></textarea></label><label>Note (facultatif)<textarea class="input" id="quick_note" rows="2" placeholder="Informations supplémentaires"></textarea></label><p class="muted">🚚 Livraison partout au Maroc · Paiement à la livraison</p><button class="btn" id="quickSubmit" type="submit" style="width:100%">Confirmer ma commande</button></form>';
+modal.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Commander ce produit</h2><button class="btn dark" onclick="closePanel()">×</button></div><div class="item" style="margin:12px 0"><img src="'+esc(photo)+'" alt="'+esc(p.name)+'"><div><b>'+esc(p.name)+'</b><div class="price">'+money(p.price)+'</div></div></div><form id="quickOrderForm" onsubmit="submitQuickOrder(event,&quot;'+id+'&quot;)"><label>Quantité *<input class="input" id="quick_qty" type="number" min="1" max="'+Math.max(1,variantStockValue(p))+'" step="1" value="1" required oninput="quickRenderUnits(&quot;'+id+'&quot;)"></label><div id="quickUnitVariants"></div><div id="quickStock" class="muted" style="margin:12px 0">Choisissez la taille et la couleur de chaque article.</div><hr><h3>Informations de livraison</h3><label>Nom complet *<input class="input" id="quick_name" autocomplete="name" required placeholder="Votre nom complet"></label><label>Téléphone *<input class="input" id="quick_phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="06XXXXXXXX"></label><label>Ville *<input class="input" id="quick_city" autocomplete="address-level2" required placeholder="Votre ville"></label><label>Adresse complète *<textarea class="input" id="quick_address" autocomplete="street-address" required rows="2" placeholder="Quartier, rue, numéro…"></textarea></label><label>Note (facultatif)<textarea class="input" id="quick_note" rows="2" placeholder="Informations supplémentaires"></textarea></label><p class="muted">🚚 Livraison partout au Maroc · Paiement à la livraison</p><button class="btn" id="quickSubmit" type="submit" style="width:100%">Confirmer ma commande</button></form>';
 panel.classList.add('open');
+quickRenderUnits(id);
+}
+function quickRenderUnits(id){
+const p=products.find(x=>x.id===id);if(!p)return;
+const host=document.querySelector('#quickUnitVariants'),qtyInput=document.querySelector('#quick_qty');if(!host||!qtyInput)return;
+const qty=Math.max(1,Math.min(50,Number.parseInt(qtyInput.value,10)||1));
+const old=[];
+host.querySelectorAll('[data-unit]').forEach(row=>old.push({size:row.querySelector('[data-unit-size]')?.value||'',color:row.querySelector('[data-unit-color]')?.value||''}));
+const sizes=p.sizes||[],colors=p.colors||[];
+host.innerHTML=Array.from({length:qty},(_,i)=>{
+ const previous=old[i]||{};
+ const sizeField=sizes.length?'<label style="flex:1;min-width:120px">Taille *<select class="input" data-unit-size onchange="quickVariantStock(&quot;'+id+'&quot;)"><option value="">Choisir</option>'+sizes.map(v=>'<option value="'+esc(v)+'" '+(previous.size===v?'selected':'')+'>'+esc(v)+'</option>').join('')+'</select></label>':'';
+ const colorField=colors.length?'<label style="flex:1;min-width:120px">Couleur *<select class="input" data-unit-color onchange="quickVariantStock(&quot;'+id+'&quot;)"><option value="">Choisir</option>'+colors.map(v=>'<option value="'+esc(v)+'" '+(previous.color===v?'selected':'')+'>'+esc(v)+'</option>').join('')+'</select></label>':'';
+ return '<div data-unit="'+i+'" style="border:1px solid #806d7c;border-radius:12px;padding:12px;margin:10px 0"><b>Article '+(i+1)+'</b><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">'+sizeField+colorField+'</div><div class="muted" data-unit-stock style="font-size:13px;margin-top:7px">Choisissez les options</div></div>';
+}).join('');
+quickVariantStock(id);
 }
 function quickVariantStock(id){
 const p=products.find(x=>x.id===id);if(!p)return;
-const size=document.querySelector('#quick_size')?.value||'',color=document.querySelector('#quick_color')?.value||'';
-const ready=(!p.sizes?.length||!!size)&&(!p.colors?.length||!!color),key=color+'|'+size,has=p.variant_stock&&Object.keys(p.variant_stock).length;
-const stock=has?Number(p.variant_stock[key]||0):Number(p.stock||0);
-const out=document.querySelector('#quickStock'),qty=document.querySelector('#quick_qty'),btn=document.querySelector('#quickSubmit');
-if(out)out.textContent=ready?'Stock disponible: '+stock:'Choisissez la taille et la couleur';
-if(qty)qty.max=String(stock);
-if(btn)btn.disabled=productOutOfStock(p)||(ready&&stock<=0);
+const rows=[...document.querySelectorAll('#quickUnitVariants [data-unit]')];
+const counts=new Map();let valid=true,summary=[];
+for(const row of rows){
+ const size=row.querySelector('[data-unit-size]')?.value||'',color=row.querySelector('[data-unit-color]')?.value||'';
+ const ready=(!(p.sizes||[]).length||!!size)&&(!(p.colors||[]).length||!!color);
+ const key=(color||'')+'|'+(size||''),has=p.variant_stock&&Object.keys(p.variant_stock).length;
+ const stock=has?Number(p.variant_stock[key]||0):Number(p.stock||0);
+ const count=(counts.get(key)||0)+1;counts.set(key,count);
+ const line=row.querySelector('[data-unit-stock]');
+ if(!ready){valid=false;if(line)line.textContent='Choisissez la taille et la couleur';continue}
+ if(stock<count){valid=false;if(line)line.textContent='Stock insuffisant pour cette combinaison · Disponible : '+stock}
+ else {if(line)line.textContent='Stock disponible : '+stock;summary.push(key)}
+}
+const out=document.querySelector('#quickStock'),btn=document.querySelector('#quickSubmit');
+if(out)out.textContent=valid?'Options choisies pour '+rows.length+' article(s)':'Vérifiez les options et le stock de chaque article.';
+if(btn)btn.disabled=!valid||!rows.length||productOutOfStock(p);
 }
 async function submitQuickOrder(event,id){
 event.preventDefault();
 const p=products.find(x=>x.id===id);if(!p)return;
 const name=document.querySelector('#quick_name').value.trim(),phone=document.querySelector('#quick_phone').value.trim(),city=document.querySelector('#quick_city').value.trim(),address=document.querySelector('#quick_address').value.trim(),note=document.querySelector('#quick_note').value.trim();
-const size=document.querySelector('#quick_size')?.value||null,color=document.querySelector('#quick_color')?.value||null,qty=Number(document.querySelector('#quick_qty')?.value||1);
+const rows=[...document.querySelectorAll('#quickUnitVariants [data-unit]')];
 if(!name||!phone||!city||!address)return alert('Veuillez remplir les champs obligatoires.');
-if(!Number.isInteger(qty)||qty<1)return alert('Quantité invalide.');
-if((p.sizes||[]).length&&!size)return alert('Veuillez choisir la taille.');
-if((p.colors||[]).length&&!color)return alert('Veuillez choisir la couleur.');
-const has=p.variant_stock&&Object.keys(p.variant_stock).length,key=(color||'')+'|'+(size||''),stock=has?Number(p.variant_stock[key]||0):Number(p.stock||0);
-if(qty>stock)return alert('Stock insuffisant. Stock disponible: '+stock);
+if(!rows.length)return alert('Veuillez sélectionner la quantité.');
+const counts=new Map(),items=[],selected=[];
+for(const row of rows){
+ const size=row.querySelector('[data-unit-size]')?.value||null,color=row.querySelector('[data-unit-color]')?.value||null;
+ if((p.sizes||[]).length&&!size)return alert('Veuillez choisir la taille de chaque article.');
+ if((p.colors||[]).length&&!color)return alert('Veuillez choisir la couleur de chaque article.');
+ const key=(color||'')+'|'+(size||''),has=p.variant_stock&&Object.keys(p.variant_stock).length,stock=has?Number(p.variant_stock[key]||0):Number(p.stock||0);
+ const used=(counts.get(key)||0)+1;counts.set(key,used);
+ if(used>stock)return alert('Stock insuffisant pour '+(color||'')+' '+(size||'')+'. Stock disponible: '+stock);
+ items.push({product_id:id,quantity:1,size,color});
+ selected.push({size,color});
+}
 const btn=document.querySelector('#quickSubmit');if(btn){btn.disabled=true;btn.textContent='Enregistrement…'}
 try{
-const {data,error}=await sb.rpc('create_order',{p_name:name,p_phone:phone,p_city:city,p_address:address,p_notes:note||null,p_items:[{product_id:id,quantity:qty,size,color}]});
+const {data,error}=await sb.rpc('create_order',{p_name:name,p_phone:phone,p_city:city,p_address:address,p_notes:note||null,p_items:items});
 if(error)throw error;
-const orderNumber=data.order_number,photo=(p.color_images||{})[color]||p.images?.[0]||'';
-const waText='Bonjour Moustapha Shop\n\nCommande #'+orderNumber+'\n\nProduit: '+p.name+'\nQuantite: '+qty+(size?'\nTaille: '+size:'')+(color?'\nCouleur: '+color:'')+(photo?'\n\nPhoto du produit:\n'+photo:'')+'\n\nNom: '+name+'\nTelephone: '+phone+'\nVille: '+city+'\nAdresse: '+address+(note?'\nNote: '+note:'')+'\n\nTotal: '+money(data.total);
+const orderNumber=data.order_number,photo=(p.images||[])[0]||'';
+const itemLines=selected.map((v,i)=>'Article '+(i+1)+(v.size?' · Taille: '+v.size:'')+(v.color?' · Couleur: '+v.color:'')).join('\n');
+const waText='Bonjour Moustapha Shop\n\nCommande #'+orderNumber+'\n\nProduit: '+p.name+'\nQuantite: '+selected.length+'\n'+itemLines+(photo?'\n\nPhoto du produit:\n'+photo:'')+'\n\nNom: '+name+'\nTelephone: '+phone+'\nVille: '+city+'\nAdresse: '+address+(note?'\nNote: '+note:'')+'\n\nTotal: '+money(data.total);
 modal.innerHTML='<div class="msg success"><h2>Commande enregistrée ✓</h2><p>Votre commande <b>'+esc(orderNumber)+'</b> a été enregistrée.</p><p>Total: <b>'+money(data.total)+'</b></p><p>Ouverture de WhatsApp pour confirmer…</p></div>';
 setTimeout(()=>{window.location.href='https://wa.me/212664624776?text='+encodeURIComponent(waText)},400);
 }catch(e){if(btn){btn.disabled=false;btn.textContent='Confirmer ma commande'}alert(e.message||'Impossible d’enregistrer la commande.')}
