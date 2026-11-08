@@ -1081,7 +1081,7 @@ async function login(){const {error}=await sb.auth.signInWithPassword({email:em.
 async function logout(){await sb.auth.signOut();admin()}
 async function loadAdminStats(){const el=document.querySelector('#adminStats');if(!el)return;const [{count:pc},{count:cc},{count:oc}]=await Promise.all([sb.from('products').select('*',{count:'exact',head:true}),sb.from('categories').select('*',{count:'exact',head:true}),sb.from('orders').select('*',{count:'exact',head:true})]);el.innerHTML='<div class="stat"><b>'+Number(pc||0)+'</b><span>Produits</span></div><div class="stat"><b>'+Number(cc||0)+'</b><span>Catégories</span></div><div class="stat"><b>'+Number(oc||0)+'</b><span>Commandes</span></div>'}
 async function loadOrders(){
-const result=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(20);
+const result=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(1000);
 const box=document.querySelector('#orders');
 if(result.error){box.innerHTML='<p class="danger">'+esc(result.error.message)+'</p>';return}
 const orders=result.data||[];
@@ -1104,8 +1104,18 @@ const colorPhoto=item=>{
  if(item.color){const idx=colors.findIndex(v=>String(v).trim().toLowerCase()===String(item.color).trim().toLowerCase());if(idx>=0&&images[idx])return images[idx];}
  return images[0]||'';
 };
+const dayKey=value=>{const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Casablanca',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(value));const get=t=>parts.find(p=>p.type===t)?.value||'';return get('year')+'-'+get('month')+'-'+get('day')};
+const dayLabel=key=>{const [y,m,d]=key.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('fr-MA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})};
+const dayGroups=new Map();
+for(const order of orders){const key=dayKey(order.created_at);if(!dayGroups.has(key))dayGroups.set(key,[]);dayGroups.get(key).push(order)}
 let html='';
-for(const order of orders){
+for(const [day,dayOrders] of dayGroups){
+ const dailyTotal=dayOrders.reduce((sum,o)=>sum+Number(o.total||0),0);
+ html+='<section style="margin:22px 0 28px;border:1px solid #eadde3;border-radius:15px;overflow:hidden;background:#fff">';
+ html+='<div style="padding:14px 16px;background:#fff2f7;border-bottom:1px solid #eadde3;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">';
+ html+='<div><b style="font-size:17px;text-transform:capitalize">📅 '+esc(dayLabel(day))+'</b><div style="font-size:13px;color:#766a70;margin-top:4px">'+dayOrders.length+' commande(s)</div></div>';
+ html+='<b style="font-size:17px;color:#ed2674">Total du jour : '+money(dailyTotal)+'</b></div><div style="padding:4px 12px">';
+ for(const order of dayOrders){
  const orderItems=items.filter(i=>i.order_id===order.id);
  let productHtml='';
  let messageLines='';
@@ -1137,6 +1147,8 @@ for(const order of orders){
  html+='<b style="font-size:18px;color:#ed2674">Total: '+money(order.total)+'</b>';
  if(waPhone)html+='<a class="btn" style="display:inline-block;text-decoration:none;white-space:normal" target="_blank" rel="noopener" href="'+link+'">💬 WhatsApp</a>';
  html+='</div></div>';
+ }
+ html+='</div></section>';
 }
 box.innerHTML=html;
 }async function updateOrderStatusQuick(id,status){
