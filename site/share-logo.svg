@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs>
+ <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff79b2"/><stop offset="1" stop-color="#d41467"/></linearGradient>
+ <linearGradient id="ivory" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffaff"/><stop offset="1" stop-color="#e9dce8"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0a8"/><stop offset=".55" stop-color="#f5c94e"/><stop offset="1" stop-color="#a87520"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1200" height="630" fill="#050305"/>
+<g transform="translate(355 52)" filter="url(#glow)">
+ <path d="M105 182c0-88 28-135 67-135s67 47 67 135M270 182c0-88 28-135 67-135s67 47 67 135" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
+ <path d="M55 180h245l-27 250H35z" fill="url(#pink)" stroke="#ff9fc7" stroke-width="7"/>
+ <path d="M286 176h220l70 250H260z" fill="url(#ivory)" stroke="#f4d5e5" stroke-width="7"/>
+ <path d="M60 200h237" stroke="#ffd2e3" stroke-width="7" opacity=".75"/>
+ <path d="M293 196h208" stroke="#fff" stroke-width="7" opacity=".8"/>
+ <path d="M297 178l-12 252" stroke="url(#gold)" stroke-width="7"/>
+</g>
+<text x="600" y="515" text-anchor="middle" fill="url(#pink)" font-family="Georgia,serif" font-size="91" letter-spacing="5">MOUSTAPHA SHOP</text>
+<path d="M170 565H460M740 565h290" stroke="url(#gold)" stroke-width="3"/>
+<path d="M600 551l10 14-10 14-10-14z" fill="url(#gold)"/>
+<text x="600" y="590" text-anchor="middle" fill="#f4c8da" font-family="Georgia,serif" font-size="28" letter-spacing="13">SHOP</text>
+</svg>
