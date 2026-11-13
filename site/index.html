@@ -1110,14 +1110,15 @@ function variantStockEditor(p){
  const stock=p.variant_stock&&typeof p.variant_stock==='object'?p.variant_stock:{};
  const images=p.color_images&&typeof p.color_images==='object'?p.color_images:{};
  const cards=colors.map(color=>{
-  const photo=images[color]||'';
+  const raw=images[color],photos=Array.isArray(raw)?raw:(raw?[raw]:[]);
+  const preview=photos.map(url=>'<img src="'+esc(url)+'" alt="" style="width:58px;height:68px;object-fit:cover;border-radius:7px;border:1px solid #eee">').join('');
   const cells=sizes.map(size=>{
    const key=(color||'')+'|'+(size||''),value=Number(stock[key]||0),available=value>0;
    return '<div class="variantSizeCell" style="border:1px solid #eee0e8;border-radius:12px;padding:10px;background:#fff;min-width:105px"><div style="font-weight:800;margin-bottom:8px">'+esc(size||'Sans taille')+'</div><label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:8px"><input type="checkbox" class="variantAvailable" '+(available?'checked':'')+' onchange="toggleVariantAvailable(this)" style="width:17px;height:17px;accent-color:#ed2870"> Disponible</label><input class="input variantStockInput" type="number" min="0" step="1" data-stock-key="'+esc(key)+'" value="'+value+'" aria-label="Stock '+esc(color)+' '+esc(size)+'" placeholder="Qté" style="min-width:0;width:100%;margin:0" oninput="syncVariantAvailable(this);updateVariantTotal()"></div>';
   }).join('');
-  return '<div class="colorVariantCard" style="border:1px solid #f0dce6;border-radius:16px;padding:14px;margin:12px 0;background:#fff"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div style="font-size:17px;font-weight:900;color:#8d174c">'+esc(color||'Sans couleur')+'</div><label style="display:flex;align-items:center;gap:12px;cursor:pointer"><span style="font-weight:700">Photo de cette couleur</span><input class="input colorImageInput" type="file" accept="image/*" data-color="'+esc(color)+'" onchange="previewColorPhoto(this)" style="max-width:240px;margin:0"></label></div><div style="display:flex;align-items:center;gap:12px;margin:12px 0"><img class="colorPhotoPreview" src="'+esc(photo)+'" alt="Photo '+esc(color)+'" style="display:'+(photo?'block':'none')+';width:100px;height:110px;object-fit:cover;border-radius:10px;border:1px solid #eee"><span class="muted colorPhotoStatus">'+(photo?'Photo enregistrée ✓':'Aucune photo choisie')+'</span></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px">'+cells+'</div></div>';
+  return '<div class="colorVariantCard" style="border:1px solid #f0dce6;border-radius:16px;padding:14px;margin:12px 0;background:#fff"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div style="font-size:17px;font-weight:900;color:#8d174c">'+esc(color||'Sans couleur')+'</div><label style="display:flex;align-items:center;gap:12px;cursor:pointer"><span style="font-weight:700">Photos de cette couleur (plusieurs possibles)</span><input class="input colorImageInput" type="file" accept="image/*" multiple data-color="'+esc(color)+'" onchange="previewColorPhoto(this)" style="max-width:260px;margin:0"></label></div><div class="colorPhotoPreviewList" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0">'+(preview||'<span class="muted">Aucune photo enregistrée</span>')+'</div><div class="colorPhotoStatus muted" style="font-size:12px;margin-bottom:10px">'+(photos.length?photos.length+' photo(s) enregistrée(s)':'Ajoute 1 à 5 photos pour cette couleur')+'</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px">'+cells+'</div></div>';
  }).join('');
- return '<div class="msg"><b>Variantes du produit</b><br>Pour chaque couleur, ajoute sa photo. Active les tailles disponibles et saisis la quantité exacte en stock. Une taille désactivée sera considérée épuisée.</div>'+cards+'<p><b>Total des variantes: <span id="variantTotal">0</span></b></p>';
+ return '<div class="msg"><b>Variantes du produit</b><br>Pour chaque couleur, ajoute plusieurs photos (vue principale et détails). Quand la cliente choisit une couleur sur le site, seules ses photos s’affichent. Active les tailles disponibles et saisis la quantité exacte en stock.</div>'+cards+'<p><b>Total des variantes: <span id="variantTotal">0</span></b></p>';
 }
 function toggleVariantAvailable(check){
  const cell=check.closest('.variantSizeCell'),input=cell?.querySelector('.variantStockInput');if(!input)return;
@@ -1129,10 +1130,10 @@ function syncVariantAvailable(input){
  const cell=input.closest('.variantSizeCell'),check=cell?.querySelector('.variantAvailable');if(check)check.checked=Number(input.value)>0;
 }
 function previewColorPhoto(input){
- const file=input.files?.[0],card=input.closest('.colorVariantCard');if(!file||!card)return;
- const img=card.querySelector('.colorPhotoPreview'),status=card.querySelector('.colorPhotoStatus');
- if(img){img.src=URL.createObjectURL(file);img.style.display='block'}
- if(status)status.textContent='Nouvelle photo prête à enregistrer';
+ const files=[...(input.files||[])],card=input.closest('.colorVariantCard');if(!card)return;
+ const list=card.querySelector('.colorPhotoPreviewList'),status=card.querySelector('.colorPhotoStatus');
+ if(list)list.innerHTML=files.length?files.map(file=>'<img src="'+URL.createObjectURL(file)+'" alt="" style="width:58px;height:68px;object-fit:cover;border-radius:7px;border:1px solid #eee">').join(''):'<span class="muted">Aucune nouvelle photo sélectionnée</span>';
+ if(status)status.textContent=files.length?files.length+' nouvelle(s) photo(s) seront ajoutées après enregistrement':'Aucune nouvelle photo sélectionnée';
 }
 function updateVariantTotal(){
  const inputs=[...document.querySelectorAll('.variantStockInput')];
@@ -1180,7 +1181,7 @@ async function saveProduct(id){
  const btn=document.querySelector('button[onclick^="saveProduct"]');if(btn){btn.disabled=true;btn.textContent='Envoi...'}
  try{
   const imageFiles=[...(document.querySelector('#pfiles').files||[])],videoFiles=[...(document.querySelector('#pvideo').files||[])];
-  const uploadedImages=[],uploadedVideos=[];const color_images={...(existing.color_images||{})};for(const input of document.querySelectorAll('.colorImageInput')){const color=input.dataset.color,file=input.files?.[0];if(file)color_images[color]=await uploadMedia(file,'products/colors');else if(!colors.includes(color))delete color_images[color];}
+  const uploadedImages=[],uploadedVideos=[];const color_images={...(existing.color_images||{})};for(const input of document.querySelectorAll('.colorImageInput')){const color=input.dataset.color,files=[...(input.files||[])];if(files.length){const uploaded=[];for(const file of files)uploaded.push(await uploadMedia(file,'products/colors'));const prior=color_images[color],priorList=Array.isArray(prior)?prior:(prior?[prior]:[]);color_images[color]=[...priorList,...uploaded]}else if(!colors.includes(color))delete color_images[color];}
   for(const f of imageFiles)uploadedImages.push(await uploadMedia(f,'products'));
   for(const f of videoFiles)uploadedVideos.push(await uploadMedia(f,'videos'));
   const priorVideos=Array.isArray(existing.videos)?existing.videos:(existing.video_url?[existing.video_url]:[]);
@@ -1360,7 +1361,7 @@ async function toggleCategory(id,value){const {error}=await sb.from('categories'
 async function deleteCategory(id){const {count}=await sb.from('products').select('*',{count:'exact',head:true}).eq('category_id',id);if(Number(count||0)>0)return alert('Cette catégorie contient des produits. Désactive-la ou change la catégorie des produits avant suppression.');if(!confirm('Supprimer cette catégorie ?'))return;const {error}=await sb.from('categories').delete().eq('id',id);if(error)return alert(error.message);adminCategories()}
 
 function parseOptions(v){return String(v||'').split(/[,;|\n]+/).map(x=>x.trim()).filter(Boolean)}
-function closePanel(){panel.classList.remove('open');clearProductUrl();applyPageSeo()}function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function closePanel(){panel.classList.remove('open');modal.classList.remove('productDetailModal');clearProductUrl();applyPageSeo()}function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 window.addEventListener('hashchange',render);window.copyProductLink=copyProductLink;window.quickOrder=quickOrder;window.quickVariantStock=quickVariantStock;window.submitQuickOrder=submitQuickOrder;window.openCart=openCart;window.closePanel=closePanel;window.add=add;window.addFromDetails=addFromDetails;window.selectProductImage=selectProductImage;window.setDetailColorImage=setDetailColorImage;window.removeCart=removeCart;window.orderDetails=orderDetails;window.updateOrderStatus=updateOrderStatus;window.saveCategory=saveCategory;window.previewLogo=previewLogo;window.saveSiteVideos=saveSiteVideos;window.removeSiteVideo=removeSiteVideo;window.clearSiteVideos=clearSiteVideos;window.editCategory=editCategory;window.toggleCategory=toggleCategory;window.deleteCategory=deleteCategory;window.adminCategories=adminCategories;window.refreshVariantEditor=refreshVariantEditor;window.updateVariantTotal=updateVariantTotal;window.adminOrders=adminOrders;window.checkout=checkout;window.sendOrder=sendOrder;window.filterCat=filterCat;window.login=login;window.logout=logout;window.shop=shop;
 save();render();load().catch(e=>{console.error('Moustapha Shop initialization failed:',e);const box=document.querySelector('#shopLoadNotice');if(box)box.innerHTML='<div class="msg danger"><b>Erreur de chargement de la boutique</b><p>'+esc(e?.message||String(e))+'</p><button class="btn" onclick="load()">Réessayer</button></div>';else app.innerHTML='<section class="section wrap"><div class="msg danger">Erreur de chargement : '+esc(e?.message||String(e))+'</div></section>';});
 </script></body></html>
