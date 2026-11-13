@@ -984,7 +984,7 @@ function renderDetailGallery(id,color='',selected=''){
  const p=products.find(x=>x.id===id);if(!p)return;
  const urls=colorGallery(p,color),main=selected&&urls.includes(selected)?selected:(urls[0]||'');
  const stage=document.querySelector('#detailGalleryStage'),thumbs=document.querySelector('#detailGalleryThumbs');
- if(stage)stage.innerHTML=main?'<img id="productMainImage" src="'+esc(main)+'" alt="'+esc(p.name)+' – '+esc(color||'Vue principale')+'" onclick="window.open(this.src,\\'_blank\\')" style="width:100%;height:100%;object-fit:contain;cursor:zoom-in">':'<span class="muted">Aucune photo disponible</span>';
+ if(stage)stage.innerHTML=main?'<img id="productMainImage" src="'+esc(main)+'" alt="'+esc(p.name)+' – '+esc(color||'Vue principale')+'" onclick="window.open(this.src,&#39;_blank&#39;)" style="width:100%;height:100%;object-fit:contain;cursor:zoom-in">':'<span class="muted">Aucune photo disponible</span>';
  if(thumbs)thumbs.innerHTML=urls.length>1?urls.map((u,i)=>'<button type="button" class="productThumb '+(u===main?'active':'')+'" data-url="'+esc(u)+'" onclick="selectProductImage(this.dataset.url)" aria-label="Photo '+(i+1)+'"><img src="'+esc(u)+'" alt="" loading="lazy"></button>').join(''):'';
  const count=document.querySelector('#detailGalleryCount');if(count)count.textContent=urls.length>1?('1 / '+urls.length):'';
 }
@@ -1067,7 +1067,7 @@ const name=document.querySelector('#n').value.trim(),phone=document.querySelecto
 if(!name||!phone||!city||!address)return alert('Veuillez remplir les champs obligatoires.');
 const items=cart.map(x=>({product_id:x.id,quantity:x.qty,size:x.size||null,color:x.color||null}));
 try{const {data,error}=await sb.rpc('create_order',{p_name:name,p_phone:phone,p_city:city,p_address:address,p_notes:note||null,p_items:items});if(error)throw error;
-const orderNumber=data.order_number;const lines=cart.map(x=>{const p=products.find(p=>p.id===x.id);const photo=(p?.color_images||{})[x.color]||p?.images?.[0]||'';return '• '+(p?.name||'Produit')+' × '+x.qty+(x.size?' | Taille: '+x.size:'')+(x.color?' | Couleur: '+x.color:'')+(photo?'\n  📸 Photo: '+photo:'')}).join('\n');
+const orderNumber=data.order_number;const lines=cart.map(x=>{const p=products.find(p=>p.id===x.id);const colorPhoto=(p?.color_images||{})[x.color],photo=(Array.isArray(colorPhoto)?colorPhoto[0]:colorPhoto)||p?.images?.[0]||'';return '• '+(p?.name||'Produit')+' × '+x.qty+(x.size?' | Taille: '+x.size:'')+(x.color?' | Couleur: '+x.color:'')+(photo?'\n  📸 Photo: '+photo:'')}).join('\n');
 const waText='Bonjour Moustapha Shop 👋\n\nNouvelle commande #'+orderNumber+'\n\n'+lines+'\n\nNom: '+name+'\nTéléphone: '+phone+'\nVille: '+city+'\nAdresse: '+address+(note?'\nNote: '+note:'')+'\n\nTotal: '+money(data.total);
 cart=[];save();const waUrl='https://wa.me/212664624776?text='+encodeURIComponent(waText);modal.innerHTML='<div class="msg success"><h2>Commande enregistrée ✅</h2><p>La commande <b>'+esc(orderNumber)+'</b> est prête.</p><p>Ouverture de WhatsApp…</p></div>';setTimeout(()=>{window.location.href=waUrl},350)}catch(e){alert(e.message||e)}}function contact(){app.innerHTML='<section class="section wrap"><h1>Contact</h1><p class="muted">Casablanca, Hay El Hassani, Rue 80</p><p><a class="btn" href="https://wa.me/212664624776" target="_blank">WhatsApp</a> <a class="btn dark" href="tel:+212664624776">+212 664-624776</a></p><p class="muted">Livraison Casablanca : 20 DH · Hors Casablanca : 35 DH</p></section>'}
 async function trackOrder(){
@@ -1272,7 +1272,7 @@ const colorPhoto=item=>{
  const p=productById[item.product_id];
  const colorImages=p?.color_images&&typeof p.color_images==='object'?p.color_images:{};const images=Array.isArray(p?.images)?p.images:[];
  const colors=Array.isArray(p?.colors)?p.colors:[];
- if(item.color&&colorImages[item.color])return colorImages[item.color];
+ if(item.color&&colorImages[item.color])return Array.isArray(colorImages[item.color])?colorImages[item.color][0]:colorImages[item.color];
  if(item.color){const idx=colors.findIndex(v=>String(v).trim().toLowerCase()===String(item.color).trim().toLowerCase());if(idx>=0&&images[idx])return images[idx];}
  return images[0]||'';
 };
