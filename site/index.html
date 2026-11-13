@@ -9,8 +9,8 @@
 <meta name="theme-color" content="#ed2870">
 <meta property="og:locale" content="fr_MA"><meta property="og:type" content="website"><meta property="og:site_name" content="Moustapha Shop">
 <meta property="og:title" content="Moustapha Shop – Mode féminine au Maroc"><meta property="og:description" content="Découvrez la collection Moustapha Shop. Commandez en ligne ou sur WhatsApp, livraison partout au Maroc.">
-<meta property="og:url" content="https://www.moustapha.shop/"><meta property="og:image" content="https://www.moustapha.shop/share-logo.svg?v=1"><meta property="og:image:alt" content="Moustapha Shop – Boutique de mode féminine">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Moustapha Shop – Mode féminine au Maroc"><meta name="twitter:description" content="Découvrez la collection Moustapha Shop. Commandez en ligne ou sur WhatsApp."><meta name="twitter:image" content="https://www.moustapha.shop/share-logo.svg?v=1">
+<meta property="og:url" content="https://www.moustapha.shop/"><meta property="og:image" content="https://www.moustapha.shop/share-logo.png?v=2"><meta property="og:image:alt" content="Moustapha Shop – Boutique de mode féminine">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Moustapha Shop – Mode féminine au Maroc"><meta name="twitter:description" content="Découvrez la collection Moustapha Shop. Commandez en ligne ou sur WhatsApp."><meta name="twitter:image" content="https://www.moustapha.shop/share-logo.png?v=2">
 <link rel="icon" href="./favicon.svg">
 <script type="application/ld+json" id="msSiteSchema">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.moustapha.shop/#organization","name":"Moustapha Shop","url":"https://www.moustapha.shop/","areaServed":{"@type":"Country","name":"Morocco"}},{"@type":"WebSite","@id":"https://www.moustapha.shop/#website","name":"Moustapha Shop","url":"https://www.moustapha.shop/","inLanguage":"fr-MA","publisher":{"@id":"https://www.moustapha.shop/#organization"}}]}</script>
 <style>
@@ -761,7 +761,7 @@ function applyPageSeo(){
  const dyn=document.getElementById('msDynamicSchema');if(dyn)dyn.remove();
 }
 function applyProductSeo(p){
- const title=(p.name||'Produit')+' – Moustapha Shop',raw=String(p.description||'Découvrez ce produit sur Moustapha Shop. Commandez en ligne ou sur WhatsApp au Maroc.').replace(/\s+/g,' ').trim(),description=raw.slice(0,155),url='https://www.moustapha.shop/?product='+encodeURIComponent(p.id),image=(p.images||[])[0]||'https://www.moustapha.shop/share-logo.svg?v=1',available=!productOutOfStock(p);
+ const title=(p.name||'Produit')+' – Moustapha Shop',raw=String(p.description||'Découvrez ce produit sur Moustapha Shop. Commandez en ligne ou sur WhatsApp au Maroc.').replace(/\s+/g,' ').trim(),description=raw.slice(0,155),url='https://www.moustapha.shop/?product='+encodeURIComponent(p.id),image='https://www.moustapha.shop/share-logo.png?v=2',available=!productOutOfStock(p);
  document.title=title;msSetMeta('meta[name="description"]','name',description);msSetMeta('meta[name="robots"]','name','index,follow,max-image-preview:large');msSetMeta('meta[name="googlebot"]','name','index,follow,max-image-preview:large');msSetCanonical(url);
  msSetMeta('meta[property="og:type"]','property','product');msSetMeta('meta[property="og:title"]','property',title);msSetMeta('meta[property="og:description"]','property',description);msSetMeta('meta[property="og:url"]','property',url);msSetMeta('meta[property="og:image"]','property',image);msSetMeta('meta[property="og:image:alt"]','property',p.name||'Produit Moustapha Shop');
  msSetMeta('meta[name="twitter:card"]','name','summary_large_image');msSetMeta('meta[name="twitter:title"]','name',title);msSetMeta('meta[name="twitter:description"]','name',description);msSetMeta('meta[name="twitter:image"]','name',image);
@@ -791,7 +791,7 @@ const catHtml=cats.slice(0,8).map((cat,i)=>{
  return '<button class="cat" data-cat="'+esc(cat.id)+'"><div class="catpic">'+(image?'<img src="'+esc(image)+'" alt="'+esc(cat.name)+'">':categoryIcons[i%categoryIcons.length])+'</div><b>'+esc(cat.name)+'</b></button>';
 }).join('');
 const heroVideos=(()=>{try{return JSON.parse(setting('hero_videos','[]'))||[]}catch(e){return []}})();
-const heroImage='https://www.moustapha.shop/share-logo.svg?v=1';
+const heroImage='https://www.moustapha.shop/share-logo.png?v=2';
 const heroMedia='';
 const latest=featuredFirst(products).slice(0,8);
 app.innerHTML='<div class="wrap" id="shopLoadNotice"></div><section class="hero"><div class="wrap"><div class="heroText"><div class="heroBrand">MOUSTAPHA SHOP</div><div class="heroBrandSub">✦ SHOP ✦</div><p class="script">NOUVELLE COLLECTION</p><h1>Votre Style, Notre Passion ♡</h1><div class="heroPerks"><span>Livraison partout au Maroc</span><span>Échange & retour facile</span><span>Paiement à la livraison</span></div><a class="heroBtn" href="#shop">Découvrir la collection <b>→</b></a></div>'+heroMedia+'</div></section><section class="categories"><div class="wrap"><div class="sectionTitle"><h2>Nos Catégories</h2><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div class="catgrid">'+catHtml+'</div></div></section><section class="section wrap"><div class="sectionTitle"><div><h2>Nouveautés <span style="display:inline-block;background:#d92779;color:#fff;border-radius:20px;padding:4px 9px;font-size:12px;vertical-align:middle">New</span></h2></div><a class="pink" href="#shop" style="font-weight:800">Voir tout →</a></div><div id="homegrid" class="grid">'+cards(latest)+'</div></section>';
