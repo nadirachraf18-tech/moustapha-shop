@@ -1077,7 +1077,7 @@ function showCitySuggestions(input){
  const q=input.value.trim().toLocaleLowerCase('fr');
  if(!q){box.innerHTML='';box.classList.remove('open');return}
  const matches=MOROCCAN_CITIES.filter(city=>city.toLocaleLowerCase('fr').startsWith(q)).slice(0,8);
- box.innerHTML=matches.length?matches.map(city=>'<button type="button" role="option" onmousedown="event.preventDefault()" onclick="selectCitySuggestion(\\''+input.id+'\\',\\''+esc(city)+'\\')">'+esc(city)+'</button>').join(''):'<div class="cityNoMatch">Aucune ville trouvée — vous pouvez garder votre saisie.</div>';
+ box.innerHTML=matches.length?matches.map(city=>'<button type="button" role="option" data-city="'+esc(city)+'" data-input="'+esc(input.id)+'" onmousedown="event.preventDefault()" onclick="selectCitySuggestion(this.dataset.input,this.dataset.city)">'+esc(city)+'</button>').join(''):'<div class="cityNoMatch">Aucune ville trouvée — vous pouvez garder votre saisie.</div>';
  box.classList.add('open');
 }
 function selectCitySuggestion(id,city){
