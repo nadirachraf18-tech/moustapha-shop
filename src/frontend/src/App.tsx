@@ -5,7 +5,7 @@ import { CartPage } from "@/pages/CartPage";
 import { CatalogPage } from "@/pages/CatalogPage";
 import { HomePage } from "@/pages/HomePage";
 import { ProductDetailPage } from "@/pages/ProductDetailPage";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { trackMetaEvent } from "@/lib/meta-pixel";
 import {
   Outlet,
@@ -18,9 +18,13 @@ import {
 
 function RootLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const previousPathname = useRef(pathname);
 
   useEffect(() => {
-    trackMetaEvent("PageView");
+    if (previousPathname.current !== pathname) {
+      previousPathname.current = pathname;
+      trackMetaEvent("PageView");
+    }
   }, [pathname]);
 
   return (
