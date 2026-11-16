@@ -10,6 +10,7 @@ import { trackMetaEvent } from "@/lib/meta-pixel";
 import {
   Outlet,
   RouterProvider,
+  useRouterState,
   createRootRoute,
   createRoute,
   createRouter,
