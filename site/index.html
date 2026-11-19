@@ -746,30 +746,69 @@ const setting=(k,f='')=>settings[k]??f;
 function applyTheme(){let old=document.querySelector('#dynamicTheme');if(old)old.remove();const pink=setting('primary_color','#ed2870'),gold=setting('accent_color','#d4af37');const st=document.createElement('style');st.id='dynamicTheme';st.textContent=`.navin a:hover,.navin a.active,.heroBtn,.btn:not(.dark),.search button,.cartbtn{background:${pink}!important}.price{color:${pink}!important}.pink,.service i{color:${pink}!important}.chip{background:${pink}12!important;border-color:${pink}55!important;color:${pink}!important}.hero:after{background:radial-gradient(circle at 50% 40%,${pink}aa,transparent 48%),linear-gradient(120deg,transparent,${gold}55)!important}.logoimg{filter:drop-shadow(0 0 10px ${pink}22)}`;document.head.appendChild(st);}
 function siteText(){document.title=setting('shop_name','Moustapha Shop')+' – Boutique en ligne';const top=document.querySelector('.topbar>div:last-child');if(top)top.innerHTML=(setting('instagram_url')?'Instagram':'')+' · '+(setting('tiktok_url')?'TikTok':'')+' · '+(setting('facebook_url')?'Facebook':'')+' · ☎ '+esc(setting('phone','+212 664-624776'));const logo=document.querySelector('#siteLogo');if(logo){logo.src='./logo.svg?v=4';logo.removeAttribute('srcset');}}
 const money=n=>new Intl.NumberFormat('fr-MA',{style:'currency',currency:'MAD',maximumFractionDigits:0}).format(Number(n||0));
-async function load(){
-const restSelect=async(table,query)=>{
- const response=await fetch(SB_URL+'/rest/v1/'+table+'?'+query,{method:'GET',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Accept:'application/json'}});
- if(!response.ok)throw new Error(table+' HTTP '+response.status+': '+(await response.text()).slice(0,240));
- return response.json();
-};
-try{
- const [c,p,s]=await Promise.all([
-  restSelect('categories','select=*&is_active=eq.true&order=sort_order.asc'),
-  restSelect('products','select=*&is_active=eq.true&order=created_at.desc'),
-  restSelect('site_settings','select=key,value')
- ]);
- cats=Array.isArray(c)?c:[];products=Array.isArray(p)?p:[];settings=Object.fromEntries((Array.isArray(s)?s:[]).map(x=>[x.key,x.value]));
- window.__shopLoadErrors=null;
- applyTheme();siteText();render();openProductFromUrl();
- console.info('Moustapha Shop loaded', {categories:cats.length,products:products.length});
- if(!cats.length&&!products.length)throw new Error('Supabase connected but returned no active categories or products.');
-}catch(e){
- console.error('Moustapha Shop REST loading failed:',e);
- window.__shopLoadErrors={message:e.message};
- const box=document.querySelector('#shopLoadNotice');
- if(box)box.innerHTML='<div class="msg danger"><b>تعذر تحميل بيانات المتجر.</b><p style="margin:6px 0">'+esc(e.message)+'</p><button class="btn" onclick="load()">إعادة المحاولة</button></div>';
- else app.innerHTML='<section class="section wrap"><div class="msg danger">'+esc(e.message)+'<br><button class="btn" onclick="load()">Réessayer</button></div></section>';
+const SHOP_CACHE_KEY='ms_shop_public_data_v1';
+const SHOP_CACHE_TTL=6*60*60*1000;
+function readShopCache(){
+ try{
+  const raw=localStorage.getItem(SHOP_CACHE_KEY);if(!raw)return null;
+  const cached=JSON.parse(raw);
+  if(!cached||!Array.isArray(cached.products)||!Array.isArray(cached.categories)||!cached.settings||typeof cached.savedAt!=='number')return null;
+  return cached;
+ }catch(e){return null}
 }
+function writeShopCache(){
+ try{
+  localStorage.setItem(SHOP_CACHE_KEY,JSON.stringify({savedAt:Date.now(),categories:cats,products,settings}));
+ }catch(e){console.warn('Shop cache could not be saved:',e)}
+}
+function renderShopData(){
+ applyTheme();siteText();render();openProductFromUrl();
+}
+function showShopCacheNotice(message){
+ const box=document.querySelector('#shopLoadNotice');
+ if(box)box.innerHTML='<div class="msg" style="font-size:12px;padding:8px 12px">'+esc(message)+'</div>';
+}
+async function load(forceRefresh=false){
+ const cached=readShopCache();
+ const cacheAge=cached?Date.now()-cached.savedAt:Infinity;
+ if(cached){
+  cats=cached.categories;products=cached.products;settings=cached.settings;
+  window.__shopLoadErrors=null;
+  renderShopData();
+  if(!forceRefresh&&cacheAge<SHOP_CACHE_TTL){
+   console.info('Moustapha Shop: loaded from local cache',{categories:cats.length,products:products.length,cacheAgeMinutes:Math.round(cacheAge/60000)});
+   return;
+  }
+ }
+ const restSelect=async(table,query)=>{
+  const response=await fetch(SB_URL+'/rest/v1/'+table+'?'+query,{method:'GET',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Accept:'application/json'},cache:'default'});
+  if(!response.ok)throw new Error(table+' HTTP '+response.status+': '+(await response.text()).slice(0,240));
+  return response.json();
+ };
+ try{
+  const [c,p,settingsRows]=await Promise.all([
+   restSelect('categories','select=*&is_active=eq.true&order=sort_order.asc'),
+   restSelect('products','select=*&is_active=eq.true&order=created_at.desc'),
+   restSelect('site_settings','select=key,value')
+  ]);
+  cats=Array.isArray(c)?c:[];products=Array.isArray(p)?p:[];settings=Object.fromEntries((Array.isArray(settingsRows)?settingsRows:[]).map(x=>[x.key,x.value]));
+  writeShopCache();
+  window.__shopLoadErrors=null;
+  renderShopData();
+  console.info('Moustapha Shop refreshed from Supabase',{categories:cats.length,products:products.length});
+  if(!cats.length&&!products.length)throw new Error('Supabase connected but returned no active categories or products.');
+ }catch(e){
+  console.error('Moustapha Shop REST loading failed:',e);
+  window.__shopLoadErrors={message:e.message};
+  if(cached){
+   showShopCacheNotice('Affichage des données enregistrées sur cet appareil. Synchronisation temporairement indisponible.');
+   console.warn('Using previously saved shop data because Supabase is unavailable.');
+   return;
+  }
+  const box=document.querySelector('#shopLoadNotice');
+  if(box)box.innerHTML='<div class="msg danger"><b>تعذر تحميل بيانات المتجر.</b><p style="margin:6px 0">'+esc(e.message)+'</p><button class="btn" onclick="load(true)">إعادة المحاولة</button></div>';
+  else app.innerHTML='<section class="section wrap"><div class="msg danger">'+esc(e.message)+'<br><button class="btn" onclick="load(true)">Réessayer</button></div></section>';
+ }
 }
 
 function privacyPolicy(){
@@ -855,7 +894,7 @@ const categoryIcons=['👗','👚','🧥','👖','👟','👜','🕶️','💄',
 const catHtml=cats.slice(0,8).map((cat,i)=>{
  const product=products.find(p=>p.category_id===cat.id&&p.images?.[0]);
  const image=product?.images?.[0];
- return '<button class="cat" data-cat="'+esc(cat.id)+'"><div class="catpic">'+(image?'<img src="'+esc(image)+'" alt="'+esc(cat.name)+'">':categoryIcons[i%categoryIcons.length])+'</div><b>'+esc(cat.name)+'</b></button>';
+ return '<button class="cat" data-cat="'+esc(cat.id)+'"><div class="catpic">'+(image?'<img src="'+esc(image)+'" alt="'+esc(cat.name)+'" loading="lazy" decoding="async">':categoryIcons[i%categoryIcons.length])+'</div><b>'+esc(cat.name)+'</b></button>';
 }).join('');
 const heroVideos=(()=>{try{return JSON.parse(setting('hero_videos','[]'))||[]}catch(e){return []}})();
 const heroImage='https://www.moustapha.shop/share-logo-real.jpg?v=4';
