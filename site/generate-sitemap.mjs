@@ -16,30 +16,45 @@ const headers = {
 const pageSize = 1000;
 const products = [];
 
-for (let offset = 0; ; offset += pageSize) {
-  const params = new URLSearchParams({
-    select: "id",
-    is_active: "eq.true",
-    order: "created_at.desc",
-    limit: String(pageSize),
-    offset: String(offset),
-  });
-  const url = new URL(endpoint);
-  url.search = params.toString();
+try {
+  for (let offset = 0; ; offset += pageSize) {
+    const params = new URLSearchParams({
+      select: "id",
+      is_active: "eq.true",
+      order: "created_at.desc",
+      limit: String(pageSize),
+      offset: String(offset),
+    });
+    const url = new URL(endpoint);
+    url.search = params.toString();
 
-  const response = await fetch(url, { headers });
-  if (!response.ok) {
-    throw new Error(
-      `Supabase products query failed (${response.status}): ${(await response.text()).slice(0, 400)}`,
-    );
-  }
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+      const detail = (await response.text()).slice(0, 400);
+      // Supabase may temporarily restrict API access after a quota is exhausted.
+      // Keep the production build available with the fixed public URLs.
+      console.warn(
+        `Sitemap: Supabase products unavailable (${response.status}); generating fixed-page sitemap only. ${detail}`,
+      );
+      products.length = 0;
+      break;
+    }
 
-  const batch = await response.json();
-  if (!Array.isArray(batch)) {
-    throw new Error("Supabase returned an unexpected products response");
+    const batch = await response.json();
+    if (!Array.isArray(batch)) {
+      console.warn("Sitemap: unexpected products response; generating fixed-page sitemap only.");
+      products.length = 0;
+      break;
+    }
+    products.push(...batch);
+    if (batch.length < pageSize) break;
   }
-  products.push(...batch);
-  if (batch.length < pageSize) break;
+} catch (error) {
+  console.warn(
+    "Sitemap: could not reach Supabase; generating fixed-page sitemap only.",
+    error instanceof Error ? error.message : String(error),
+  );
+  products.length = 0;
 }
 
 const baseUrl = "https://www.moustapha.shop";
