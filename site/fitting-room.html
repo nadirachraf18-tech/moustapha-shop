@@ -80,7 +80,7 @@ const SB_URL='https://hwjbfjvgiquflhbledzd.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3amJmanZnaXF1ZmxoYmxlZHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMDk4NjEsImV4cCI6MjEwNTY4NTg2MX0.1rnHuutHVHRTSMfNTkcLuUhj-jUgicxgL2c9vf8oTU8';
 const db=window.supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s);
-let products=[],selected=[],currentSize='M',rotation=0,currentProduct=null;
+let products=[],selected=[],currentSize='M',rotation=0,currentProduct=null,selectedColor='';
 const profiles={XS:{w:.82,title:'XS · Très fine',desc:'Silhouette très fine'},S:{w:.9,title:'S · Fine',desc:'Silhouette fine'},M:{w:1,title:'M · Standard',desc:'Silhouette équilibrée'},L:{w:1.1,title:'L · Courbes douces',desc:'Silhouette avec courbes douces'},XL:{w:1.2,title:'XL · Courbes généreuses',desc:'Silhouette plus généreuse'},XXL:{w:1.3,title:'XXL · Grande taille',desc:'Silhouette grande taille'}};
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -90,7 +90,7 @@ function makeEllipsoid(parent,geo,color,pos,scale){const m=new THREE.Mesh(geo,ro
 function init3D(){
  const canvas=$('#threeStage');if(!canvas||!window.THREE)return;
  scene3d=new THREE.Scene();scene3d.background=null;
- camera3d=new THREE.PerspectiveCamera(34,1,.1,100);camera3d.position.set(0,1.45,6.8);
+ camera3d=new THREE.PerspectiveCamera(34,1,.1,100);camera3d.position.set(0,2.0,6.8);camera3d.lookAt(0,.72,0);
  renderer3d=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer3d.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3d.outputColorSpace=THREE.SRGBColorSpace;
  scene3d.add(new THREE.HemisphereLight(0xffe6ef,0x29121e,2.1));
  const key=new THREE.DirectionalLight(0xffe4d0,2.4);key.position.set(-3,5,5);scene3d.add(key);
@@ -115,7 +115,7 @@ function init3D(){
  (function animate(){requestAnimationFrame(animate);renderer3d.render(scene3d,camera3d)})();
 }
 function update3DSize(){if(!mannequin3d)return;const w=profiles[currentSize]?.w||1;mannequin3d.scale.set(w,1,w)}
-function update3DOutfit(){if(!garmentTop3d)return;const top=selected.some(x=>x.kind==='top'),bottom=selected.some(x=>x.kind==='bottom');garmentTop3d.visible=top;garmentBottom3d.visible=bottom;if(top)garmentTop3d.material.color.setHex(0xe92c79);if(bottom)garmentBottom3d.material.color.setHex(0x30202a)}
+function update3DOutfit(){if(!garmentTop3d)return;const top=selected.some(x=>x.kind==='top'),bottom=selected.some(x=>x.kind==='bottom');garmentTop3d.visible=top;garmentBottom3d.visible=bottom;const palette={noir:0x242026,black:0x242026,blanc:0xf3edf0,white:0xf3edf0,rouge:0xb51f39,red:0xb51f39,rose:0xed2870,pink:0xed2870,bleu:0x345c91,blue:0x345c91,beige:0xc7a77b,gris:0x77777d,vert:0x3d7457};const col=palette[String(selectedColor).toLowerCase()]||0xe92c79;if(top)garmentTop3d.material.color.setHex(col);if(bottom)garmentBottom3d.material.color.setHex(col===0xe92c79?0x30202a:col)}
 
 function toast(t){const x=$('#toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2200)}
 function available(p){return p&&p.is_active!==false&&(Array.isArray(p.images)?p.images.length>0:true)}
@@ -127,15 +127,15 @@ host.innerHTML=list.map(p=>'<article class="product"><img src="'+escapeHtml((p.i
 host.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>addProduct(b.dataset.add)));
 }
 function renderSizes(){const host=$('#sizes');host.innerHTML=Object.keys(profiles).map(s=>'<button class="size '+(s===currentSize?'active':'')+'" data-size="'+s+'">'+s+'</button>').join('');host.querySelectorAll('[data-size]').forEach(b=>b.addEventListener('click',()=>setSize(b.dataset.size)))}
-function setSize(s){currentSize=s;$('#mannequin').style.setProperty('--bodyw',profiles[s].w);$('#sizeTitle').textContent=profiles[s].title;$('#sizeDesc').textContent=profiles[s].desc;$('#sizeNote').textContent='Silhouette · Taille '+s;renderSizes();renderColors();update3DSize()}
+function setSize(s){currentSize=s;$('#sizeTitle').textContent=profiles[s].title;$('#sizeDesc').textContent=profiles[s].desc;$('#sizeNote').textContent='Silhouette · Taille '+s;renderSizes();renderColors();update3DSize()}
 function addProduct(id){const p=products.find(x=>String(x.id)===String(id));if(!p)return;currentProduct=p;const kind=category(p);selected=selected.filter(x=>x.kind!==kind);selected.push({id:p.id,name:p.name,image:(p.images||[])[0]||'',kind,product:p});renderSelected();renderGarments();renderColors();update3DOutfit();toast('Produit ajouté au mannequin')}
 function removeProduct(id){selected=selected.filter(x=>String(x.id)!==String(id));currentProduct=selected[selected.length-1]?.product||null;renderSelected();renderGarments();renderColors();update3DOutfit()}
 function renderSelected(){const host=$('#selected');host.innerHTML=selected.length?selected.map(x=>'<div class="selectedItem"><img src="'+escapeHtml(x.image)+'" alt=""><span>'+escapeHtml(x.name)+'</span><button data-remove="'+escapeHtml(x.id)+'" aria-label="Retirer">×</button></div>').join(''):'<div class="empty">Aucune pièce sélectionnée pour le moment.</div>';host.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>removeProduct(b.dataset.remove)))}
-function renderGarments(){const top=selected.find(x=>x.kind==='top'),bottom=selected.find(x=>x.kind==='bottom');const a=$('#topGarment'),b=$('#bottomGarment');a.style.display=top?'block':'none';a.src=top?.image||'';b.style.display=bottom?'block':'none';b.src=bottom?.image||''}
+function renderGarments(){update3DOutfit()}
 function renderColors(){const p=currentProduct||selected[selected.length-1]?.product;const sel=$('#colorSelect');if(!p){sel.innerHTML='<option value="">Couleur du produit</option>';return}const colors=Array.isArray(p.colors)?p.colors:[];sel.innerHTML='<option value="">Choisir une couleur</option>'+colors.map(c=>'<option>'+escapeHtml(c)+'</option>').join('')}
-$('#colorSelect').addEventListener('change',e=>{if(e.target.value)toast('Couleur choisie : '+e.target.value+' · aperçu catalogue')});
-$('#rotate').addEventListener('click',()=>{rotation+=35;$('#mannequin').style.transform='rotateY('+rotation+'deg) scale(var(--bodyw),1)'});
-$('#reset').addEventListener('click',()=>{selected=[];currentProduct=null;rotation=0;$('#mannequin').style.transform='rotateY(-8deg) scale(var(--bodyw),1)';renderSelected();renderGarments();renderColors();update3DOutfit();toast('Mannequin réinitialisé')});
+$('#colorSelect').addEventListener('change',e=>{selectedColor=e.target.value;update3DOutfit();if(e.target.value)toast('Couleur appliquée à l’aperçu 3D')});
+$('#rotate').addEventListener('click',()=>{rotation+=35;if(mannequin3d)mannequin3d.rotation.y=rotation*Math.PI/180});
+$('#reset').addEventListener('click',()=>{selected=[];currentProduct=null;selectedColor='';rotation=0;if(mannequin3d)mannequin3d.rotation.y=0;$('#colorSelect').value='';renderSelected();renderGarments();renderColors();update3DOutfit();toast('Mannequin réinitialisé')});
 async function load(){try{const {data,error}=await db.from('products').select('*').limit(200);if(error)throw error;products=(data||[]).filter(available);renderProducts();renderSizes();init3D();setSize('M')}catch(e){console.error(e);$('#products').innerHTML='<div class="empty">Impossible de charger les produits pour le moment. Le service catalogue est temporairement indisponible.</div>';renderSizes();init3D();setSize('M')}}
 load();
 </script>
