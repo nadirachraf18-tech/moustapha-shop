@@ -85,29 +85,40 @@ const profiles={XS:{w:.82,title:'XS · Très fine',desc:'Silhouette très fine'}
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 let scene3d, camera3d, renderer3d, mannequin3d, garmentTop3d, garmentBottom3d, drag3d=false, lastX3d=0;
-function roundedBodyMaterial(color){return new THREE.MeshStandardMaterial({color,roughness:.72,metalness:0.02})}
+function roundedBodyMaterial(color){return new THREE.MeshStandardMaterial({color,roughness:.78,metalness:0.01})}
 function makeEllipsoid(parent,geo,color,pos,scale){const m=new THREE.Mesh(geo,roundedBodyMaterial(color));m.position.set(...pos);m.scale.set(...scale);parent.add(m);return m}
+function makeCapsule(parent,color,pos,radius,length,rotation=0){const m=new THREE.Mesh(new THREE.CapsuleGeometry(radius,length,8,20),roundedBodyMaterial(color));m.position.set(...pos);m.rotation.z=rotation;parent.add(m);return m}
 function init3D(){
  const canvas=$('#threeStage');if(!canvas||!window.THREE)return;
  scene3d=new THREE.Scene();scene3d.background=null;
- camera3d=new THREE.PerspectiveCamera(34,1,.1,100);camera3d.position.set(0,2.0,6.8);camera3d.lookAt(0,.72,0);
+ camera3d=new THREE.PerspectiveCamera(29,1,.1,100);camera3d.position.set(0,1.45,8.3);camera3d.lookAt(0,.72,0);
  renderer3d=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer3d.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer3d.outputColorSpace=THREE.SRGBColorSpace;
- scene3d.add(new THREE.HemisphereLight(0xffe6ef,0x29121e,2.1));
- const key=new THREE.DirectionalLight(0xffe4d0,2.4);key.position.set(-3,5,5);scene3d.add(key);
- const rim=new THREE.PointLight(0xe92c79,18,12);rim.position.set(3,2,2);scene3d.add(rim);
+ scene3d.add(new THREE.HemisphereLight(0xffe6ef,0x29121e,2.0));
+ const key=new THREE.DirectionalLight(0xffe4d0,2.2);key.position.set(-3,5,5);scene3d.add(key);
+ const rim=new THREE.PointLight(0xe92c79,12,12);rim.position.set(3,2,2);scene3d.add(rim);
  mannequin3d=new THREE.Group();scene3d.add(mannequin3d);
- const skin=0xc98e78, geo=new THREE.SphereGeometry(1,32,24);
- makeEllipsoid(mannequin3d,geo,skin,[0,2.15,0],[.29,.38,.27]);
- const neck=new THREE.Mesh(new THREE.CylinderGeometry(.12,.14,.34,24),roundedBodyMaterial(skin));neck.position.y=1.79;mannequin3d.add(neck);
- makeEllipsoid(mannequin3d,geo,skin,[0,1.35,0],[.58,.78,.3]);
- makeEllipsoid(mannequin3d,geo,skin,[0,.58,0],[.62,.38,.32]);
- const limb=(x,y,z,r1,r2,h,rot=0)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,24),roundedBodyMaterial(skin));m.position.set(x,y,z);m.rotation.z=rot;mannequin3d.add(m);return m};
- limb(-.73,1.18,0,.12,.16,1.05,.12);limb(.73,1.18,0,.12,.16,1.05,-.12);
- limb(-.31,-.25,0,.17,.2,1.15,.02);limb(.31,-.25,0,.17,.2,1.15,-.02);
- makeEllipsoid(mannequin3d,geo,skin,[-.31,-.86,.04],[.2,.15,.32]);makeEllipsoid(mannequin3d,geo,skin,[.31,-.86,.04],[.2,.15,.32]);
- garmentTop3d=makeEllipsoid(mannequin3d,geo,0xe92c79,[0,1.35,.012],[.595,.79,.306]);
- garmentBottom3d=makeEllipsoid(mannequin3d,geo,0x30202a,[0,.58,.01],[.635,.39,.326]);
- const floor=new THREE.Mesh(new THREE.CircleGeometry(1.15,48),new THREE.MeshBasicMaterial({color:0xd7ad68,transparent:true,opacity:.12}));floor.rotation.x=-Math.PI/2;floor.position.y=-1.02;scene3d.add(floor);
+ const skin=0xc98e78, geo=new THREE.SphereGeometry(1,40,28);
+ // Head and neck: intentionally faceless to match the store's no-face visual style.
+ makeEllipsoid(mannequin3d,geo,skin,[0,2.22,0],[.245,.32,.235]);
+ const neck=new THREE.Mesh(new THREE.CylinderGeometry(.105,.12,.22,24),roundedBodyMaterial(skin));neck.position.y=1.91;mannequin3d.add(neck);
+ // Natural shoulder, waist and hip proportions.
+ makeEllipsoid(mannequin3d,geo,skin,[0,1.48,0],[.49,.53,.255]);
+ makeEllipsoid(mannequin3d,geo,skin,[0,1.02,0],[.345,.43,.225]);
+ makeEllipsoid(mannequin3d,geo,skin,[0,.63,0],[.47,.34,.27]);
+ // Arms angle gently outward and finish with small hands.
+ makeCapsule(mannequin3d,skin,[-.59,1.22,0],.105,.66,.13);
+ makeCapsule(mannequin3d,skin,[.59,1.22,0],.105,.66,-.13);
+ makeEllipsoid(mannequin3d,geo,skin,[-.69,.78,.015],[.105,.13,.09]);
+ makeEllipsoid(mannequin3d,geo,skin,[.69,.78,.015],[.105,.13,.09]);
+ // Legs are separate smooth capsules with subtle feet.
+ makeCapsule(mannequin3d,skin,[-.235,-.12,0],.145,.88,.015);
+ makeCapsule(mannequin3d,skin,[.235,-.12,0],.145,.88,-.015);
+ makeEllipsoid(mannequin3d,geo,0x30252b,[-.235,-.72,.105],[.19,.105,.31]);
+ makeEllipsoid(mannequin3d,geo,0x30252b,[.235,-.72,.105],[.19,.105,.31]);
+ // Garment overlays sit close to the body instead of covering the whole torso like a sphere.
+ garmentTop3d=makeEllipsoid(mannequin3d,geo,0xe92c79,[0,1.43,.018],[.505,.57,.272]);
+ garmentBottom3d=makeEllipsoid(mannequin3d,geo,0x30202a,[0,.63,.02],[.485,.355,.285]);
+ const floor=new THREE.Mesh(new THREE.CircleGeometry(1.05,48),new THREE.MeshBasicMaterial({color:0xd7ad68,transparent:true,opacity:.10}));floor.rotation.x=-Math.PI/2;floor.position.y=-.88;scene3d.add(floor);
  const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;renderer3d.setSize(w,h,false);camera3d.aspect=w/h;camera3d.updateProjectionMatrix()};new ResizeObserver(resize).observe(canvas);resize();
  canvas.addEventListener('pointerdown',e=>{drag3d=true;lastX3d=e.clientX;canvas.setPointerCapture(e.pointerId)});
  canvas.addEventListener('pointermove',e=>{if(!drag3d)return;mannequin3d.rotation.y+=(e.clientX-lastX3d)*.012;lastX3d=e.clientX});
