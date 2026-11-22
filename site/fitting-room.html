@@ -136,7 +136,7 @@ function renderColors(){const p=currentProduct||selected[selected.length-1]?.pro
 $('#colorSelect').addEventListener('change',e=>{selectedColor=e.target.value;update3DOutfit();if(e.target.value)toast('Couleur appliquée à l’aperçu 3D')});
 $('#rotate').addEventListener('click',()=>{rotation+=35;if(mannequin3d)mannequin3d.rotation.y=rotation*Math.PI/180});
 $('#reset').addEventListener('click',()=>{selected=[];currentProduct=null;selectedColor='';rotation=0;if(mannequin3d)mannequin3d.rotation.y=0;$('#colorSelect').value='';renderSelected();renderGarments();renderColors();update3DOutfit();toast('Mannequin réinitialisé')});
-async function load(){try{const {data,error}=await db.from('products').select('*').limit(200);if(error)throw error;products=(data||[]).filter(available);renderProducts();renderSizes();init3D();setSize('M')}catch(e){console.error(e);$('#products').innerHTML='<div class="empty">Impossible de charger les produits pour le moment. Le service catalogue est temporairement indisponible.</div>';renderSizes();init3D();setSize('M')}}
+async function load(){renderSizes();init3D();setSize('M');try{const {data,error}=await db.from('products').select('*').limit(200);if(error)throw error;products=(data||[]).filter(available);renderProducts()}catch(e){console.error('Fitting room catalogue error:',e);$('#products').innerHTML='<div class="empty">Impossible de charger les produits pour le moment. Le mannequin 3D reste disponible ; réessayez plus tard pour afficher la collection.</div>'}}
 load();
 </script>
 </body></html>
