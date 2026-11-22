@@ -116,8 +116,15 @@ function init3D(){
  makeEllipsoid(mannequin3d,geo,0x30252b,[-.235,-.72,.105],[.19,.105,.31]);
  makeEllipsoid(mannequin3d,geo,0x30252b,[.235,-.72,.105],[.19,.105,.31]);
  // Garment overlays sit close to the body instead of covering the whole torso like a sphere.
- garmentTop3d=makeEllipsoid(mannequin3d,geo,0xe92c79,[0,1.43,.018],[.505,.57,.272]);
- garmentBottom3d=makeEllipsoid(mannequin3d,geo,0x30202a,[0,.63,.02],[.485,.355,.285]);
+ // Tailored garment silhouettes (front-facing extruded shapes), not oversized oval overlays.
+ const topShape=new THREE.Shape();
+ topShape.moveTo(-.43,.47);topShape.lineTo(-.25,.57);topShape.lineTo(-.13,.51);topShape.lineTo(.13,.51);topShape.lineTo(.25,.57);topShape.lineTo(.43,.47);topShape.lineTo(.34,.12);topShape.lineTo(.29,-.48);topShape.lineTo(-.29,-.48);topShape.lineTo(-.34,.12);topShape.closePath();
+ const topGeo=new THREE.ExtrudeGeometry(topShape,{depth:.045,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.018,bevelThickness:.018});
+ garmentTop3d=new THREE.Mesh(topGeo,roundedBodyMaterial(0xe92c79));garmentTop3d.position.set(0,1.43,.245);mannequin3d.add(garmentTop3d);
+ const bottomShape=new THREE.Shape();
+ bottomShape.moveTo(-.34,.27);bottomShape.lineTo(.34,.27);bottomShape.lineTo(.29,-.58);bottomShape.lineTo(.055,-.58);bottomShape.lineTo(0,-.04);bottomShape.lineTo(-.055,-.58);bottomShape.lineTo(-.29,-.58);bottomShape.closePath();
+ const bottomGeo=new THREE.ExtrudeGeometry(bottomShape,{depth:.05,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.012,bevelThickness:.012});
+ garmentBottom3d=new THREE.Mesh(bottomGeo,roundedBodyMaterial(0x30202a));garmentBottom3d.position.set(0,.62,.29);mannequin3d.add(garmentBottom3d);
  const floor=new THREE.Mesh(new THREE.CircleGeometry(1.05,48),new THREE.MeshBasicMaterial({color:0xd7ad68,transparent:true,opacity:.10}));floor.rotation.x=-Math.PI/2;floor.position.y=-.88;scene3d.add(floor);
  const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;renderer3d.setSize(w,h,false);camera3d.aspect=w/h;camera3d.updateProjectionMatrix()};new ResizeObserver(resize).observe(canvas);resize();
  canvas.addEventListener('pointerdown',e=>{drag3d=true;lastX3d=e.clientX;canvas.setPointerCapture(e.pointerId)});
