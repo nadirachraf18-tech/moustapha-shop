@@ -2,7 +2,7 @@
   "name": "@caffeine/template-app",
   "type": "module",
   "engines": {
-    "node": ">=16.0.0",
+    "node": "24.x",
     "pnpm": ">=7.0.0",
     "npm": "please use pnpm"
   },
