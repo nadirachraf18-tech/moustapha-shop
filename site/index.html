@@ -1236,10 +1236,25 @@ function refreshVariantEditor(){
  document.querySelector('#variantEditor').innerHTML=variantStockEditor(p);
  updateVariantTotal();
 }
+async function compressImageForUpload(file){
+  if(!file||!file.type?.startsWith('image/')||file.type==='image/gif'||file.type==='image/svg+xml')return file;
+  try{
+    const bitmap=await createImageBitmap(file);
+    const maxSide=1600,scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
+    const width=Math.max(1,Math.round(bitmap.width*scale)),height=Math.max(1,Math.round(bitmap.height*scale));
+    const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+    const ctx=canvas.getContext('2d',{alpha:true});if(!ctx){bitmap.close?.();return file}
+    ctx.drawImage(bitmap,0,0,width,height);bitmap.close?.();
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.78));
+    if(!blob||blob.size>=file.size)return file;
+    return new File([blob],(file.name.replace(/\\.[^.]+$/,'')||'image')+'.webp',{type:'image/webp',lastModified:Date.now()});
+  }catch(e){console.warn('Image compression skipped:',e);return file}
+}
 async function uploadMedia(file,folder){
-  const ext=(file.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const optimized=await compressImageForUpload(file);
+  const ext=optimized.type==='image/webp'?'webp':(optimized.name.split('.').pop()||'bin').toLowerCase().replace(/[^a-z0-9]/g,'');
   const path=folder+'/'+Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
-  const {error}=await sb.storage.from('media').upload(path,file,{upsert:false,contentType:file.type||undefined});
+  const {error}=await sb.storage.from('media').upload(path,optimized,{upsert:false,contentType:optimized.type||undefined,cacheControl:'31536000'});
   if(error)throw error;
   const {data}=sb.storage.from('media').getPublicUrl(path);
   return data.publicUrl;
