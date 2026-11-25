@@ -2,7 +2,7 @@ import { db, json, readBody, requireAdmin, methodNotAllowed } from './_lib.js';
 export default async function handler(req,res){
  try{
   const sql=db();
-  if(req.method==='GET')return json(res,200,await sql`SELECT * FROM public.products WHERE is_active=true ORDER BY created_at DESC`);
+  if(req.method==='GET'){if(req.query?.admin==='1'){if(!await requireAdmin(req,res))return;return json(res,200,await sql`SELECT * FROM public.products ORDER BY created_at DESC`);}return json(res,200,await sql`SELECT * FROM public.products WHERE is_active=true AND is_demo=false ORDER BY created_at DESC`);}
   const admin=await requireAdmin(req,res);if(!admin)return;
   if(req.method==='POST'){
    const b=await readBody(req);if(!b||!String(b.name||'').trim()||!(Number(b.price)>=0))return json(res,400,{error:'Invalid product data'});
