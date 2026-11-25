@@ -10,7 +10,7 @@ export default async function handler(req,res){
   const upstream=await fetch(AUTH_URL+path,init);
   const body=await upstream.arrayBuffer();
   res.status(upstream.status);
-  for(const key of ['content-type','cache-control','set-cookie','location']){const value=upstream.headers.get(key);if(value)res.setHeader(key,value);}
+  for(const key of ['content-type','cache-control','location']){const value=upstream.headers.get(key);if(value)res.setHeader(key,value);}const cookies=typeof upstream.headers.getSetCookie==='function'?upstream.headers.getSetCookie():[];if(cookies.length)res.setHeader('Set-Cookie',cookies);else{const cookie=upstream.headers.get('set-cookie');if(cookie)res.setHeader('Set-Cookie',cookie);}
   res.setHeader('Cache-Control','no-store');
   return res.send(Buffer.from(body));
  }catch(error){console.error('Neon Auth proxy failed',error?.message);return res.status(502).json({error:'Authentication service unavailable'});}
