@@ -1,0 +1,8 @@
+import {db,json,readBody,requireAdmin,methodNotAllowed} from './_lib.js';
+export default async function handler(req,res){try{const sql=db();
+if(req.method==='POST'){const b=await readBody(req);if(!b)return json(res,400,{error:'Invalid order'});const rows=await sql`SELECT public.create_order(${b.name},${b.phone},${b.city},${b.address},${JSON.stringify(Array.isArray(b.items)?b.items:[])}::jsonb,${b.notes||null}) AS result`;return json(res,201,rows[0].result);}
+if(req.method==='GET'&&req.query?.action==='track'){const n=String(req.query.number||''),p=String(req.query.phone||'');if(!n||!p)return json(res,400,{error:'Order number and phone required'});return json(res,200,await sql`SELECT * FROM public.track_public_order(${n},${p})`);}
+if(!await requireAdmin(req,res))return;
+if(req.method==='GET')return json(res,200,await sql`SELECT * FROM public.orders ORDER BY created_at DESC LIMIT 1000`);
+if(req.method==='PATCH'){const b=await readBody(req),ok=['pending','confirmed','preparing','shipped','delivered','cancelled'];if(!b?.id||!ok.includes(b.status))return json(res,400,{error:'Invalid order status'});const rows=await sql`UPDATE public.orders SET status=${b.status} WHERE id=${b.id}::uuid RETURNING *`;return rows.length?json(res,200,rows[0]):json(res,404,{error:'Order not found'});}
+return methodNotAllowed(res,['GET','POST','PATCH']);}catch(e){console.error('Orders API error',e?.message);return json(res,400,{error:'Order request failed'});}}
